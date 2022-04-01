@@ -1,2 +1,2 @@
 
-print("Hola Mundito")
+print("Hola Mundito. Tamos ready")
