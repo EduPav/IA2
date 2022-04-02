@@ -1,2 +1,2 @@
 
-print("Branch para el ejercicio 1")
+print("branch para los algoritmos genéticos")
