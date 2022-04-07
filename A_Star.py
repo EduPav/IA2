@@ -1,54 +1,55 @@
 
-import pygame
-pygame.init()
+#Change layout function
+#Determine start and end by input
+#Check if not visiting all the nodes
+#Ask if improving n complexity worths it?
+#Don't allow the user to select a barrier
 
-GREY = (128, 128, 128)
+import pygame   #For a graphic representation
+pygame.init()   
+
+GREY = (128, 128, 128)  #Colors hex
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 TURQUOISE = (64, 224, 208)
 ORANGE= (255, 165, 0)
 
-Win = pygame.display.set_mode((370, 600))   #Here we set the display 10x16
+Win = pygame.display.set_mode((370, 600))   #Here we set the display 10x16 (depending on draw_layout function square sizes)
 pygame.display.set_caption("A STAR algorithm, Exercise 1") #Caption for the display
 
 class Node:
     def __init__(self, parent = None, position = None):
         self.parent = parent
         self.position = position
-        self.heuristic_Cost = 0
-        self.g_cost = 0
-        self.f_cost = 0
+        self.h = 0
+        self.g = 0
+        self.f = 0
     def __eq__(self, other):
         return self.position == other.position
 
 
 def heuristic(cell1, cell2):  #We will use the Manhattan distance
+    """Manhattan distance"""
     x1, y1 = cell1
     x2, y2 = cell2
 
     return abs(x2-x1) + abs (y2-y1)
 
-def g():  #This si the cost
-    x = 1
-    return x
-
 def A_Star(maze, start, end):
-    """You might not select a barrier"""
-    #rowS, colS = start
-    
-    start_node = Node(None, start)
-    start_node.heuristic_Cost = heuristic(start, end)
-    start_node.g_cost = 0
-    start_node.f_cost = start_node.heuristic_Cost + start_node.g_cost
+    """You must not select a barrier"""
 
-    #rowE, colE = end
+    start_node = Node(None, start)
+    start_node.h = heuristic(start, end)
+    start_node.g = 0
+    start_node.f = start_node.h + start_node.g
+
     end_node = Node(None, end) 
-    end_node.heuristic_Cost = 0
+    end_node.h = 0
 
     #Open and close list
-    open_list = [] #An array that contains the nodes that have been generated but have not been yet examined till yet.
-    close_list = [] #An array which contains the nodes which are examined.
+    open_list = [] #An array that contains the nodes that have been generated but have not been examined yet.
+    close_list = [] #An array which contains the nodes examined.
 
     open_list.append(start_node)  #Add the start node
 
@@ -57,8 +58,8 @@ def A_Star(maze, start, end):
         current_node = open_list[0]
         current_index = 0
 
-        for index, item in enumerate(open_list):           #REVISAR
-            if item.f_cost < current_node.f_cost:
+        for index, item in enumerate(open_list):
+            if item.f < current_node.f:
                 current_node = item
                 current_index = index
         
@@ -70,48 +71,54 @@ def A_Star(maze, start, end):
         #Goal
         if current_node == end_node:
             path = []  #List with the path
-            current = current_node
-            while current is not None:
-                path.append(current.position)
-                current = current.parent
-            return path[::-1] #Reversed path
+            while current_node is not None: #It goes from last node to the start one going through parent nodes.
+                path.append(current_node.position)
+                current_node = current_node.parent
+            return path[::-1]
 
         # Generate Leaves
         leaves = []
         for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
-            #Get node position
+            #Get neighbour node position
             node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
             #Within range
-            if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[len(maze)-1]) -1) or node_position[1] < 0:
+            if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[0]) -1) or node_position[1] < 0:
                 continue
             #Make sure we are not in a barrier
             if maze[node_position[0]][node_position[1]] != 0:
                 continue
-
-            #New node
             new_node = Node(current_node, node_position)
+            inCloseList=False
+            #for leave in leaves:
+            for closed_leave in close_list:
+                if new_node==closed_leave:
+                    inCloseList=True
+                        
+            if inCloseList:
+                continue
+            #New node
+            
 
             leaves.append(new_node)
 
         #Loop for leaves
         for leave in leaves:
-            for closed_leave in close_list:
-                if leave == closed_leave:
-                    continue
         
             #Heuristic, g() and f() values
-            leave.g_cost = current_node.g_cost + 1
-            leave.heuristic_Cost = heuristic(leave.position, end_node.position)
-            leave.f_cost = leave.g_cost + leave.heuristic_Cost
+            leave.g = current_node.g + 1
+            leave.h = heuristic(leave.position, end_node.position)
+            leave.f = leave.g + leave.h
 
             #Leave already in open list
+            inOpenList=False
             for open_node in open_list:
-                if leave == open_node and leave.g_cost > open_node.g_cost:
-                    continue
-
-            #ADD LEAVE TO THE OPEN LIST
+                if leave == open_node:
+                    inOpenList=True
+            if inOpenList:
+                continue
             open_list.append(leave)
+
 
 
 def draw_grid(win, rows, width):
@@ -124,7 +131,7 @@ def draw_grid(win, rows, width):
 def draw(win, x, y, width, color):
         pygame.draw.rect(win, color, (x, y, width, width))
 
-def draw_Gondolas():
+def draw_layout(): 
     draw(Win, 37.5, 37.5, 37.5, BLACK )
     draw(Win, 37.5, 75, 37.5, BLACK )
     draw(Win, 37.5, 112.5, 37.5, BLACK )
@@ -218,9 +225,6 @@ def draw_path(path):
             draw(Win, x*37, y*37, 37.5, GREEN)
 
 def main():
-    
-    
-
     maze = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 1, 1, 0, 1, 1, 0, 1, 1, 0],
             [0, 1, 1, 0, 1, 1, 0, 1, 1, 0],
@@ -239,7 +243,7 @@ def main():
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
     start = (0, 0)   #(FILAS, COLUMNAS)
-    end = (3, 6)
+    end = (10, 5)
 
     path = A_Star(maze, start, end)
     print(path)
@@ -262,19 +266,19 @@ def main():
     pygame.draw.rect(Win, WHITE, (0, 0, 600, 600))
     draw_grid(Win, 16, 600)
     k=1
-    draw_Gondolas()
+    draw_layout()
     draw_Start_End(start, end)
     draw_path(path)
     while k>0:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-    #pygame.draw.rect(Win, WHITE, (50, 50, 600, 600))
+
         pygame.display.update()  #Function of pygame that updates the display
 
 if __name__ == '__main__':
     main()
 
-#LO QUE SE PUEDE AGREGAR ES QUE SE ELIJA EL PRINCIPIO Y EL FINAL CON EL MOUSE
+
 
     
