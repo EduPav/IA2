@@ -1,9 +1,9 @@
 
-#Change layout function
-#Determine start and end by input
-#Check if not visiting all the nodes
-#Ask if improving n complexity worths it?
-#Don't allow the user to select a barrier
+#Determine start and end by input-Klara
+#Check if not visiting all the nodes-Edu
+#Don't allow the user to select a barrier-Klara
+#Comment functions with """ """ -Edu
+#Optimize draw-Agus
 
 import pygame   #For a graphic representation
 pygame.init()   
