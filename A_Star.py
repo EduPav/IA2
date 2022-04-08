@@ -131,92 +131,14 @@ def draw_grid(win, rows, width):
 def draw(win, x, y, width, color):
         pygame.draw.rect(win, color, (x, y, width, width))
 
-def draw_layout(): 
-    draw(Win, 37.5, 37.5, 37.5, BLACK )
-    draw(Win, 37.5, 75, 37.5, BLACK )
-    draw(Win, 37.5, 112.5, 37.5, BLACK )
-    draw(Win, 37.5, 149, 37.5, BLACK )
-    draw(Win, 75, 37.5, 37.5, BLACK )
-    draw(Win, 75, 75, 37.5, BLACK )
-    draw(Win, 75, 112.5, 37.5, BLACK )
-    draw(Win, 75, 149, 37.5, BLACK )
 
-    draw(Win, 186.5, 37.5, 37.5, BLACK )
-    draw(Win, 186.5, 75, 37.5, BLACK )
-    draw(Win, 186.5, 112.5, 37.5, BLACK )
-    draw(Win, 186.5, 149, 37.5, BLACK )
-    draw(Win, 149, 37.5, 37.5, BLACK )
-    draw(Win, 149, 75, 37.5, BLACK )
-    draw(Win, 149, 112.5, 37.5, BLACK )
-    draw(Win, 149, 149, 37.5, BLACK )
-
-    draw(Win, 260.5, 37.5, 37.5, BLACK )
-    draw(Win, 260.5, 75, 37.5, BLACK )
-    draw(Win, 260.5, 112.5, 37.5, BLACK )
-    draw(Win, 260.5, 149, 37.5, BLACK )
-    draw(Win, 297, 37.5, 37.5, BLACK )
-    draw(Win, 297, 75, 37.5, BLACK )
-    draw(Win, 297, 112.5, 37.5, BLACK )
-    draw(Win, 297, 149, 37.5, BLACK )
-
-    draw(Win, 149, 223, 37.5, BLACK )
-    draw(Win, 149, 260.5, 37.5, BLACK )
-    draw(Win, 149, 297, 37.5, BLACK )
-    draw(Win, 149, 334.5, 37.5, BLACK )
-    draw(Win, 186.5, 223, 37.5, BLACK )
-    draw(Win, 186.5, 260.5, 37.5, BLACK )
-    draw(Win, 186.5, 297, 37.5, BLACK )
-    draw(Win, 186.5, 334.5, 37.5, BLACK )
-
-    draw(Win, 37.5, 223, 37.5, BLACK )
-    draw(Win, 37.5, 260.5, 37.5, BLACK )
-    draw(Win, 37.5, 297, 37.5, BLACK )
-    draw(Win, 37.5, 334.5, 37.5, BLACK )
-    draw(Win, 75, 223, 37.5, BLACK )
-    draw(Win, 75, 260.5, 37.5, BLACK )
-    draw(Win, 75, 297, 37.5, BLACK )
-    draw(Win, 75, 334.5, 37.5, BLACK )
-
-    draw(Win, 260.5, 223, 37.5, BLACK )
-    draw(Win, 260.5, 260.5, 37.5, BLACK )
-    draw(Win, 260.5, 297, 37.5, BLACK )
-    draw(Win, 260.5, 334.5, 37.5, BLACK )
-    draw(Win, 297, 223, 37.5, BLACK )
-    draw(Win, 297, 260.5, 37.5, BLACK )
-    draw(Win, 297, 297, 37.5, BLACK )
-    draw(Win, 297, 334.5, 37.5, BLACK )
-
-    draw(Win, 37.5, 407.5, 37.5, BLACK )
-    draw(Win, 37.5, 445, 37.5, BLACK )
-    draw(Win, 37.5, 482.5, 37.5, BLACK )
-    draw(Win, 37.5, 519, 37.5, BLACK )
-    draw(Win, 75, 407.5, 37.5, BLACK )
-    draw(Win, 75, 445, 37.5, BLACK )
-    draw(Win, 75, 482.5, 37.5, BLACK )
-    draw(Win, 75, 519, 37.5, BLACK )
-
-    draw(Win, 149, 407.5, 37.5, BLACK )
-    draw(Win, 149, 445, 37.5, BLACK )
-    draw(Win, 149, 482.5, 37.5, BLACK )
-    draw(Win, 149, 519, 37.5, BLACK )
-    draw(Win, 186.5, 407.5, 37.5, BLACK )
-    draw(Win, 186.5, 445, 37.5, BLACK )
-    draw(Win, 186.5, 482.5, 37.5, BLACK )
-    draw(Win, 186.5, 519, 37.5, BLACK )
-
-    draw(Win, 260.5, 407.5, 37.5, BLACK )
-    draw(Win, 260.5, 445, 37.5, BLACK )
-    draw(Win, 260.5, 482.5, 37.5, BLACK )
-    draw(Win, 260.5, 519, 37.5, BLACK )
-    draw(Win, 297, 407.5, 37.5, BLACK )
-    draw(Win, 297, 445, 37.5, BLACK )
-    draw(Win, 297, 482.5, 37.5, BLACK )
-    draw(Win, 297, 519, 37.5, BLACK )
 
 def draw_Start_End(start, end):
     draw(Win, start[1]*37.5, start[0]*37.5, 37.5, TURQUOISE)
     draw(Win, end[1]*37, end[0]*37, 37.5, ORANGE)
 
+def draw_maze(x, y):
+    draw(Win, x*37, y*37, 37.5, BLACK)
 
 def draw_path(path):
     for x in range (len(path)):
@@ -266,9 +188,13 @@ def main():
     pygame.draw.rect(Win, WHITE, (0, 0, 600, 600))
     draw_grid(Win, 16, 600)
     k=1
-    draw_layout()
+    
     draw_Start_End(start, end)
     draw_path(path)
+    for i in range(len(maze)):
+        for j in range(len(maze[0])):
+            if maze[i][j] == 1:
+                draw_maze(j, i)
     while k>0:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
