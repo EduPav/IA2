@@ -1,10 +1,3 @@
-
-#Determine start and end by input-Klara
-#Check if not visiting all the nodes-Edu
-#Don't allow the user to select a barrier-Klara
-#Comment functions with """ """ -Edu
-#Optimize draw-Agus
-
 import pygame   #For a graphic representation
 pygame.init()   
 
@@ -29,15 +22,15 @@ class Node:
         return self.position == other.position
 
 
-def heuristic(cell1, cell2):  #We will use the Manhattan distance
-    """Manhattan distance"""
+def heuristic(cell1, cell2):  
+    """Returns manhattan distance"""
     x1, y1 = cell1
     x2, y2 = cell2
 
     return abs(x2-x1) + abs (y2-y1)
 
 def A_Star(maze, start, end):
-    """You must not select a barrier"""
+    """Returns shortest path from start to end"""
 
     start_node = Node(None, start)
     start_node.h = heuristic(start, end)
@@ -48,19 +41,19 @@ def A_Star(maze, start, end):
     end_node.h = 0
 
     #Open and close list
-    open_list = [] #An array that contains the nodes that have been generated but have not been examined yet.
-    close_list = [] #An array which contains the nodes examined.
+    open_list = [] #An array that contains the nodes that have been generated but have not been expanded yet.
+    close_list = [] #An array which contains the expanded nodes.
 
-    open_list.append(start_node)  #Add the start node
+    open_list.append(start_node)  
 
     #Loop
     while len(open_list) > 0:
-        current_node = open_list[0]
+        current_node = open_list[0] #Not necessarily an ordered list
         current_index = 0
 
-        for index, item in enumerate(open_list):
+        for index, item in enumerate(open_list): #n complexity
             if item.f < current_node.f:
-                current_node = item
+                current_node = item #Node class
                 current_index = index
         
         #Pop eliminates the current node from the open list and then with append we add it to the close list
@@ -80,18 +73,18 @@ def A_Star(maze, start, end):
         leaves = []
         for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
             #Get neighbour node position
-            node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
+            neighbour_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
-            #Within range
-            if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[0]) -1) or node_position[1] < 0:
+            #Guarantees neighbours inside the warehouse
+            if neighbour_position[0] > (len(maze) - 1) or neighbour_position[0] < 0 or neighbour_position[1] > (len(maze[0]) -1) or neighbour_position[1] < 0:
                 continue
-            #Make sure we are not in a barrier
-            if maze[node_position[0]][node_position[1]] != 0:
+            #Guarantees we are not in a barrier
+            if maze[neighbour_position[0]][neighbour_position[1]] != 0:
                 continue
-            new_node = Node(current_node, node_position)
+            new_node = Node(current_node, neighbour_position)
             inCloseList=False
             #for leave in leaves:
-            for closed_leave in close_list:
+            for closed_leave in close_list:#n complexity
                 if new_node==closed_leave:
                     inCloseList=True
                         
@@ -99,7 +92,6 @@ def A_Star(maze, start, end):
                 continue
             #New node
             
-
             leaves.append(new_node)
 
         #Loop for leaves
@@ -112,12 +104,36 @@ def A_Star(maze, start, end):
 
             #Leave already in open list
             inOpenList=False
-            for open_node in open_list:
+            for open_node in open_list: #n complexity
                 if leave == open_node:
                     inOpenList=True
             if inOpenList:
                 continue
             open_list.append(leave)
+
+
+def input_coordinates(maze, position = None):
+    """Asks for valid coordinates to user and returns them"""
+    #Reads coordinates
+    values = []
+    if(position == "end"):
+        print("Enter the coordinate for end node :")
+    elif(position == "start"):
+        print("Enter the coordinates for start node :")
+
+    for coord in ('y : ', 'x : '):
+        values.append(int(input(coord)))
+    print("\n")
+    
+    #Checks coordinates
+    if values[0]<0 or values[1]<0 or values[0]>=len(maze) or values[1]>=len(maze[0]):
+        print("Coordinates outside the warehouse")
+        return 0
+    if values[0] != None and values[1]!=None and maze[values[0]][values[1]] == 0:
+        return values
+    else:
+        print("You can't select a barrier")
+        return 0
 
 
 
@@ -129,18 +145,22 @@ def draw_grid(win, rows, width):
             pygame.draw.line(win, GREY, (j*GAP , 0), (j*GAP , width))  #Here we draw the vertical lines
 
 def draw(win, x, y, width, color):
-        pygame.draw.rect(win, color, (x, y, width, width))
+    """Paints a square"""
+    pygame.draw.rect(win, color, (x, y, width, width))
 
 
 
 def draw_Start_End(start, end):
+    """Paints squares in start and end positions"""
     draw(Win, start[1]*37.5, start[0]*37.5, 37.5, TURQUOISE)
     draw(Win, end[1]*37, end[0]*37, 37.5, ORANGE)
 
 def draw_maze(x, y):
+    """Paints a barrier"""
     draw(Win, x*37, y*37, 37.5, BLACK)
 
 def draw_path(path):
+    """Paints list of coordinates"""
     for x in range (len(path)):
         if x > 0 and x < len(path)-1:
             y, x = path[x]
@@ -148,30 +168,8 @@ def draw_path(path):
 
 
 
-def input_coordinates(maze, position = None):
-    values = []
-    if(position == "end"):
-        string = "Enter the coordinate for end node :"
-    elif(position == "start"):
-        string = "Enter the coordinates for start node :"
-    else:
-        string = "Enter the coordinates of "
-    print(string)
-    for coord in ('x : ', 'y : '):
-        values.append(int(input(coord)))
-    print("\n")
-    
-        
-    for i in values:
-        if i != None and maze[values[0]][values[1]] == 0:
-            return values
-        else:
-            print("You typed something wrong !")
-            return 0
+if __name__ == '__main__':
 
-
-
-def main():
     maze = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 1, 1, 0, 1, 1, 0, 1, 1, 0],
             [0, 1, 1, 0, 1, 1, 0, 1, 1, 0],
@@ -199,7 +197,7 @@ def main():
         end_position = input_coordinates(maze, "end")
     
 
-    start = (start_position[0], start_position[1])   #(FILAS, COLUMNAS)
+    start = (start_position[0], start_position[1])   #(ROW,COLUMN)//(Y,X)
     end = (end_position[0], end_position[1])
 
     path = A_Star(maze, start, end)
@@ -207,17 +205,20 @@ def main():
     y = len(maze[0])
     x = len(maze)
     f = len(path)
+    print("The shortest path has a length of "+str(f))
     
-    for i in range(f):
-        if i < len(path)-1:
-            x, y = path[i]
-            maze[x][y]=2
-        else:
-            x, y = path[i]
-            maze[x][y]=3
-    
-    print('\n'.join([''.join(['{:4}'.format(item) for item in row]) 
-      for row in maze]))  #Print the matrix
+#In case we want to print the matrix instead of the visual representation with pygame   
+#    for i in range(f):
+#        if i < len(path)-1:
+#            x, y = path[i]
+#            maze[x][y]=2
+#        else:
+#            x, y = path[i]
+#            maze[x][y]=3
+#
+
+#    print('\n'.join([''.join(['{:4}'.format(item) for item in row]) 
+#      for row in maze]))  #Print the matrix
 
     
     pygame.draw.rect(Win, WHITE, (0, 0, 600, 600))
@@ -237,8 +238,7 @@ def main():
 
         pygame.display.update()  #Function of pygame that updates the display
 
-if __name__ == '__main__':
-    main()
+
 
 
 
