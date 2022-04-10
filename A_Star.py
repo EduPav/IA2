@@ -44,7 +44,6 @@ def A_Star(maze, start, end):
     start_node.g = 0
     start_node.f = start_node.h + start_node.g
 
-    end_node = Node(None, end) 
     end_node.h = 0
 
     #Open and close list
@@ -146,6 +145,31 @@ def draw_path(path):
             y, x = path[x]
             draw(Win, x*37, y*37, 37.5, GREEN)
 
+
+
+def input_coordinates(maze, position = None):
+    values = []
+    if(position == "end"):
+        string = "Enter the coordinate for end node :"
+    elif(position == "start"):
+        string = "Enter the coordinates for start node :"
+    else:
+        string = "Enter the coordinates of "
+    print(string)
+    for coord in ('x : ', 'y : '):
+        values.append(int(input(coord)))
+    print("\n")
+    
+        
+    for i in values:
+        if i != None and maze[values[0]][values[1]] == 0:
+            return values
+        else:
+            print("You typed something wrong !")
+            return 0
+
+
+
 def main():
     maze = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 1, 1, 0, 1, 1, 0, 1, 1, 0],
@@ -163,9 +187,19 @@ def main():
             [0, 1, 1, 0, 1, 1, 0, 1, 1, 0],
             [0, 1, 1, 0, 1, 1, 0, 1, 1, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    
+    
+    start_position = 0
+    end_position = 0
+    
+    while start_position == 0:
+        start_position = input_coordinates(maze, "start")
+    while end_position == 0:
+        end_position = input_coordinates(maze, "end")
+    
 
-    start = (0, 0)   #(FILAS, COLUMNAS)
-    end = (10, 5)
+    start = (start_position[0], start_position[1])   #(FILAS, COLUMNAS)
+    end = (end_position[0], end_position[1])
 
     path = A_Star(maze, start, end)
     print(path)
