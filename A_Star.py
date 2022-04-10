@@ -44,6 +44,7 @@ def A_Star(maze, start, end):
     start_node.g = 0
     start_node.f = start_node.h + start_node.g
 
+    end_node = Node(None, end)
     end_node.h = 0
 
     #Open and close list
