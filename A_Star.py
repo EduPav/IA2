@@ -1,7 +1,7 @@
 import pygame   #For a graphic representation
 pygame.init()   
 
-GREY = (128, 128, 128)  #Colors hex
+GREY = (128, 128, 128)  #Colors hex code
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
