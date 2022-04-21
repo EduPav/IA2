@@ -72,6 +72,7 @@ def Total_cost_of (sequence, distances):
 
 def Simulated_Annealing(distances, sequence,T0,Kmax):
     """Returns the best picking sequence"""
+    T=T0
     for counter in range(Kmax):
         previous_cost=Total_cost_of(sequence,distances)
         New_sequence = Random_Permutation(sequence)  #Generate a neighbor
@@ -89,7 +90,7 @@ def Simulated_Annealing(distances, sequence,T0,Kmax):
                 sequence = New_sequence
                 previous_cost = current_cost
 
-        T=temperature(TO, counter) #Reduces temperature
+        T=temperature(T0, counter) #Reduces temperature
         
     
     return sequence #Best picking sequence
