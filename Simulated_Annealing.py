@@ -1,3 +1,4 @@
+from asyncore import read
 import random
 import math
 import csv
@@ -13,17 +14,30 @@ import csv
 #dictionary = {1:[0,1], 2:[0,2], 3:[2,0], 4:[2,3], 5:[3,0], 6:[3,3], 7:[4,0], 8:[4,3], 9:[6,0], 10:[6,3], 11:[7,0], 12:[7,3], 13:[8,0], 14:[8,3], 15:[9,0], 16:[9,3], 17:[11,0], 18:[11,3], 19:[12,0], 20:[12,3], 21:[13,0], 22:[13,3], 23:[14,0], 24:[14,3]}
 #Despues cambiar dictionary (ahora esta puesto para que no de error)
 
-def read_file(filename):
+def read_file(filename, order_number):
     """Read file to get product list"""
-    with open(filename, 'r') as f:
-        archive = f.readlines()
-        result = []
-    for i in archive:
-        if i.find("\n") != -1:
-            result.append(int(i.replace("\n", "")))
-        else:
-            result.append(int(i))
-    return result
+    result = []
+    tmp = []
+    if order_number <= 100:
+        command = "Order " + str(order_number)
+        with open(filename, 'r') as f:
+            for line in f:
+                tmp.append(line.strip())
+        index_command = tmp.index(command)+1
+        tmp = tmp[index_command:]
+        i = 0
+        while i < len(tmp):
+            if(tmp[i] == ''):
+                break
+            i+=1
+        tmp = tmp[0:i]
+        for elem in tmp:
+            result.append(int(elem.replace("P", "")))
+        return result
+    else:
+        print("Order doesn't exist")
+        return False
+
 
 def Random_Permutation(order_list):
     """Asks for an sequence. Returns a neighbour sequence with one permutation"""
@@ -89,6 +103,8 @@ def main():
         Distance_matrix = list(zip(*rows))
     #Distance matrix is now a list of tuples
 
+    order = read_file("orders.txt", int(input("Insert order number : ")))
+    print(order)
     
     Kmax = 10000 #Maximum number of iterations
     Temp0 = 10 #INITIAL TEMPERATURE
