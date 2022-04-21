@@ -98,3 +98,4 @@ def A_Star(maze, start, end):
             if inOpenList:
                 continue
             open_list.append(leave)
+    return -1
