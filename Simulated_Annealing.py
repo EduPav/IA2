@@ -14,7 +14,17 @@ import csv
 #dictionary = {1:[0,1], 2:[0,2], 3:[2,0], 4:[2,3], 5:[3,0], 6:[3,3], 7:[4,0], 8:[4,3], 9:[6,0], 10:[6,3], 11:[7,0], 12:[7,3], 13:[8,0], 14:[8,3], 15:[9,0], 16:[9,3], 17:[11,0], 18:[11,3], 19:[12,0], 20:[12,3], 21:[13,0], 22:[13,3], 23:[14,0], 24:[14,3]}
 #Despues cambiar dictionary (ahora esta puesto para que no de error)
 
-
+def read_file(filename):
+    """Read file to get product list"""
+    with open(filename, 'r') as f:
+        archive = f.readlines()
+        result = []
+    for i in archive:
+        if i.find("\n") != -1:
+            result.append(int(i.replace("\n", "")))
+        else:
+            result.append(int(i))
+    return result
 
 
 def Random_Permutation(order_list):
@@ -46,6 +56,16 @@ def Total_cost_of (sequence, distances):
     for i in range(len(sequence)-1):        
         Tcost+=distances[sequence[i]][sequence[i+1]]
     return Tcost
+
+def closest_valid_position(product_number):
+    """Returns the closest valid position of a product"""
+    x,y = dictionary[product_number]
+    if product_number%2 == 0:
+        x += 1
+    else:
+        x -= 1
+    return x,y
+
 
 def Simulated_Annealing(distances, sequence,T0,Kmax):
     """Returns the best picking sequence"""
