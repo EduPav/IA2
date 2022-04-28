@@ -82,6 +82,10 @@ def main():
         wr = csv.writer(f)
         wr.writerows(distance_matrix)
 
+#Print the matrix
+    for row in maze:
+        print(row)
+
 
 if __name__ == '__main__':
     main()
