@@ -4,8 +4,8 @@ import math
 # pep-8
 # Klaga: Build generate random individual function of python so it's more efficient.
 # Si cambias tamaño de la poblacion, cambiar population_premium.
-# Use premium inside crossover function. (Be careful. Crossover strongly depends on the population size)
-# Corrige Agus para cruce de orden.
+# Use premium inside crossover function. (LISTO)        (Be careful. Crossover strongly depends on the population size)
+# Corrige Agus para cruce de orden. (LISTO)
 
 
 order_one = [10, 5, 8, 9, 2, 7, 1, 3, 6, 4]
@@ -31,9 +31,11 @@ def fitness(population_size):
     pass
 
 
-def population_premium(population, population_costs):  # Elimina los últimos 2 valores
+def crossover(population, population_costs):
 
-    # Ordena population de acuerdo a population_costs
+    # POPULATION PREMIUM
+
+    # Order population acording to population_costs
     temp_list = [i for _, i in sorted(zip(population_costs, population))]
     temp_cost = sorted(population_costs)
 
@@ -41,7 +43,7 @@ def population_premium(population, population_costs):  # Elimina los últimos 2 
     population_costs = temp_cost  # [::-1]
 
     for _ in range(2):
-        min_idx = population_costs.index(min(population_costs))
+        min_idx = population_costs.index(max(population_costs))
         population_costs.pop(min_idx)
         population.pop(min_idx)
 
@@ -51,12 +53,10 @@ def population_premium(population, population_costs):  # Elimina los últimos 2 
     population_costs.append(population_costs[0])
     population_costs.append(population_costs[3])
 
-    return population, population_costs
-
-
-def crossover(population):
+    # CROSSOVER
     juniors = []
     for i in range(0, len(population), 2):
+        # print(len(population))
         individual_length = len(population[0])
         junior1 = [0]*individual_length
         junior2 = [0]*individual_length
@@ -68,21 +68,45 @@ def crossover(population):
 
         junior1[a:b] = auxB
         junior2[a:b] = auxA
+        print(auxA)
+        print(auxB)
         j = 0
+        k = 0
+
         while j < (individual_length):
 
-            if j < a or j > b:  
-                numA = random.randint(1, individual_length-1)
-                numB = random.randint(1, individual_length-1)
-                if numA not in junior1 and numB not in junior2:
-                    junior1[j] = numA
-                    junior2[j] = numB
+            for k in range(individual_length):
+                if j < a or j >= b:
+
+                    if population[i][k] not in junior1:
+                        junior1[j] = population[i][k]
+                        j = j + 1
+                        k = 0
+                else:
                     j = j + 1
 
-            else:
-                j = j + 1
+                if j == (individual_length):
+                    break
+        j = 0
+        k = 0
+        while j < (individual_length):
+
+            for k in range(individual_length):
+                if j < a or j >= b:
+                    if population[i+1][k] not in junior2:
+                        junior2[j] = population[i+1][k]
+                        j = j + 1
+                        k = 0
+
+                else:
+                    j = j + 1
+
+                if j == (individual_length):
+                    break
         juniors.append(junior1)
         juniors.append(junior2)
+
+    return juniors
 
 
 def mutation(individual):
@@ -118,8 +142,7 @@ def main():
     for i in range(population_size):
         population_costs.append(fitness(population[i]))
 
-    population, population_costs = population_premium(
-        population, population_costs)  # Elimina los últimos 2 valores
+    crossover(population, population_costs)
 
 
 if __name__ == '__main__':
