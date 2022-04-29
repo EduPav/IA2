@@ -131,18 +131,37 @@ def main():
     population_costs = []
     mutation_prob = 0.01  # mutation probability
 
-    # Genera la población
+    # Generates initial population
     for i in range(population_size):
         population.append(generate_random_individual(original_layout))
 
+    # Print initial population
     print('\n'.join([''.join(['{:4}'.format(item) for item in row])
-                     for row in population]))  # Print the matrix
+                     for row in population]))  
 
-    # Calcula el "costo" de cada ordenamiento
-    for i in range(population_size):
-        population_costs.append(fitness(population[i]))
+    
+    generation = 0
+    while generation < time:
 
-    juniors = crossover(population, population_costs)
+        # Calculates the cost of each individual
+        for i in range(population_size):
+            population_costs.append(fitness(population[i]))
+
+        # Eliminates the last two individuals and make the crossover:
+        population = crossover(population, population_costs)
+
+        for j in range(population_size):
+            r = random.uniform(0, 1)
+            if mutation_prob > r:
+                population[j] = mutation(population[j])
+
+        generation = generation + 1
+
+
+    print("The best warehouse design is: ")
+    print('\n'.join([''.join(['{:4}'.format(item) for item in row])
+                     for row in population])) 
+
 
 
 if __name__ == '__main__':
