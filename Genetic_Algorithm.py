@@ -142,7 +142,7 @@ def main():
     for i in range(population_size):
         population_costs.append(fitness(population[i]))
 
-    crossover(population, population_costs)
+    juniors = crossover(population, population_costs)
 
 
 if __name__ == '__main__':
