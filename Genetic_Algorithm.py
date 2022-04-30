@@ -1,5 +1,7 @@
+import csv
 import random
 import math
+import Simulated_Annealing
 # Correct language use
 # pep-8
 # Klaga: Build generate random individual function of python so it's more efficient.
@@ -10,6 +12,7 @@ import math
 
 order_one = [10, 5, 8, 9, 2, 7, 1, 3, 6, 4]
 order_two = [3, 5, 8, 7, 9, 4, 6, 1, 10, 2]
+order_three = [3, 5, 8, 7, 9, 4, 6, 1]
 
 
 def generate_random_individual(lista_original):
@@ -27,9 +30,54 @@ def generate_random_individual(lista_original):
     return lista
 
 
-def fitness(population_size):
-    pass
+def filter_order(order_sequence, individual):
+    """converts the order sequence for it to correspond to the distance matrix calculated before and avoid using a* multiple times
 
+    Args:
+        order_sequence (list): list of orders of products
+        individual (list): current product warehouse layout
+
+    Returns:
+        list: list of orders convert to new warehouse layout
+    """
+    filtered_order = []
+    for i in order_sequence:
+        filter = individual.index(i)+1
+        filtered_order.append(filter)
+    return filtered_order
+
+
+def fitness(individual):
+    """calculates the cost of orders for each order, for one individual
+
+    Args:
+        individual (list): warehouse layout
+
+    Returns:
+        int: total cost of orders
+    """
+    order_list = []
+    total_cost = 0
+    
+    with open('distance_matrix.csv') as csvfile:
+        rows = csv.reader(csvfile)
+        distance_matrix = list(zip(*rows))
+    #Distance matrix is now a list of tuples of STRINGS
+
+    #uncomment when individual list is all of products
+    # for i in range(1,100): 
+        # order = Simulated_Annealing.read_file("orders.txt", i)
+        # order_list.append(filter_order(order, individual))
+    order_list.append(filter_order(order_three, individual))#to test, delete when individual list is all of products
+    
+    Kmax = 10000 #Maximum number of iterations
+    Temp0 = 10 #INITIAL TEMPERATURE
+    for i in order_list:
+        _,_,_,best_cost = Simulated_Annealing.simulated_annealing(distance_matrix, i, Temp0, Kmax)
+        total_cost += best_cost
+    
+    print("total cost =", total_cost)
+    return total_cost
 
 def crossover(population, population_costs):
 
