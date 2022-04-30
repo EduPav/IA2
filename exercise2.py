@@ -2,6 +2,8 @@ from simulated_annealing import simulated_annealing
 import matplotlib.pyplot as plt
 import csv
 
+#Correct all archives to use pep8 docstrings
+
 def plot_costs(costs_list):
     """
     Plot the costs list vs its place in the list

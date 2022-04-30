@@ -10,10 +10,10 @@ def random_permutation(order_list):
     Return a neighbour sequence (list) with one permutation of the input one.
     order_list: list->Sequence of products 
     """
-    random_a = random.randint(1, len(order_list)-1)  
-    random_b = random.randint(1, len(order_list)-1)
+    random_a = random.randint(0, len(order_list)-1)  
+    random_b = random.randint(0, len(order_list)-1)
     while(random_a==random_b): #So it doesn't pick the same product in the sequence twice
-        random_b = random.randint(1, len(order_list)-1)
+        random_b = random.randint(0, len(order_list)-1)
 
 
     prod_a = order_list[random_a]
