@@ -1,13 +1,19 @@
 import csv
 import random
-import math
-import Simulated_Annealing
+
+from numpy import size
+from Simulated_Annealing import simulated_annealing
+
+#Save best example found
+
 # Correct language use
 # pep-8
-# Klaga: Build generate random individual function of python so it's more efficient.
 # Si cambias tamaño de la poblacion, cambiar population_premium.
-# Use premium inside crossover function. (LISTO)        (Be careful. Crossover strongly depends on the population size)
-# Corrige Agus para cruce de orden. (LISTO)
+# Be careful. Crossover strongly depends on the population size
+#Separate Genetic algorithm from exercise 3
+#change layout size to 99
+#Selection of only best 3 and mix them (if kill<50% evolution is slow )
+#Fitness only using first 10 orders. Correct that. Make them random? representative? all?
 
 
 order_one = [10, 5, 8, 9, 2, 7, 1, 3, 6, 4]
@@ -15,19 +21,20 @@ order_two = [3, 5, 8, 7, 9, 4, 6, 1, 10, 2]
 order_three = [3, 5, 8, 7, 9, 4, 6, 1]
 
 
-def generate_random_individual(lista_original):
+def generate_random_individual(layout_size):
+    #list of 1,2,3,...98,99
+    individual = list(range(layout_size+1))
+    individual.pop(0)
 
-    lista = lista_original[:]
-    longitud_lista = len(lista)
-    for i in range(longitud_lista):
+    for i in range(layout_size):
 
-        indice_aleatorio = random.randint(0, longitud_lista - 1)
+        rand_idx = random.randint(0, layout_size - 1)
         # Exchange
-        temporal = lista[i]
-        lista[i] = lista[indice_aleatorio]
-        lista[indice_aleatorio] = temporal
+        temp = individual[i]
+        individual[i] = individual[rand_idx]
+        individual[rand_idx] = temp
 
-    return lista
+    return individual
 
 
 def filter_order(order_sequence, individual):
@@ -47,7 +54,7 @@ def filter_order(order_sequence, individual):
     return filtered_order
 
 
-def fitness(individual):
+def fitness(individual,distance_matrix,orders_to_test):
     """calculates the cost of orders for each order, for one individual
 
     Args:
@@ -58,25 +65,14 @@ def fitness(individual):
     """
     order_list = []
     total_cost = 0
-    
-    with open('distance_matrix.csv') as csvfile:
-        rows = csv.reader(csvfile)
-        distance_matrix = list(zip(*rows))
-    #Distance matrix is now a list of tuples of STRINGS
 
-    #uncomment when individual list is all of products
-    # for i in range(1,100): 
-        # order = Simulated_Annealing.read_file("orders.txt", i)
-        # order_list.append(filter_order(order, individual))
-    order_list.append(filter_order(order_three, individual))#to test, delete when individual list is all of products
-    
+    order_list=[filter_order(order, individual) for order in orders_to_test]
+       
     Kmax = 10000 #Maximum number of iterations
     Temp0 = 10 #INITIAL TEMPERATURE
-    for i in order_list:
-        _,_,_,best_cost = Simulated_Annealing.simulated_annealing(distance_matrix, i, Temp0, Kmax)
+    for single_order in order_list:
+        _,_,_,best_cost = simulated_annealing(distance_matrix, single_order, Temp0, Kmax)
         total_cost += best_cost
-    
-    print("total cost =", total_cost)
     return total_cost
 
 def crossover(population, population_costs):
@@ -160,7 +156,9 @@ def crossover(population, population_costs):
 def mutation(individual):
     random_a = random.randint(0, len(individual)-1)
     random_b = random.randint(0, len(individual)-1)
-    # print(random_a)
+    while(random_b==random_a):
+        random_b = random.randint(0, len(individual)-1) #To guarantee mutation occurs
+
     individual_a = individual[random_a]
     individual_b = individual[random_b]
 
@@ -169,47 +167,95 @@ def mutation(individual):
 
     return individual
 
+def read_file(filename, order_number):
+    """
+    Read "filename" file to return the "order_number"º products list
+    filename: string->Name of the file to read
+    order_number: int->Number of order to read from the file.
+    """
+    result = []
+    tmp = []
+    if order_number >= 0 and order_number <= 100:
+        command = "Order " + str(order_number)
+        with open(filename, 'r') as f:
+            for line in f:
+                tmp.append(line.strip()) #Build list of every line in the archive
+        index_command = tmp.index(command)+1 #Get the index where the order specified starts
+        tmp = tmp[index_command:]   #Cut from the list the previous lines to the specified order
+        i = 0
+        while i < len(tmp):
+            if(tmp[i] == ''):
+                break
+            i+=1
+        tmp = tmp[0:i] #Now tmp is the list of products in the specified order
+        for elem in tmp:
+            result.append(int(elem.replace("P", ""))) #Transform every product from string "Px" into int x
+        return result
+    else:
+        print("Order doesn't exist")
+        return False
+
 
 def main():
+    #Number of annealing runs:  pop_size*time*order_list_size=6*1000*100=600k
+    #Number of possible layouts=99! 
     time = 1000  # Max amount of iterations
-
-    original_layout = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    population_size = 6
+    layout_size=99
+    #original layout: [1,2,3,4,5,6,7,8,....,98,99]
+    population_size = 6 
     population = []
     population_costs = []
-    mutation_prob = 0.01  # mutation probability
+    mutation_prob = 0.01  #mutation probability
+
+    with open('distance_matrix.csv') as csvfile:
+        rows = csv.reader(csvfile)
+        distance_matrix = list(zip(*rows))
+    #Distance matrix is now a list of tuples of STRINGS
+
+    #Put all orders in a list
+    orders_list=[]
+    for i in range(1,100): 
+        order =read_file("orders.txt", i)
+        orders_list.append(order)
 
     # Generates initial population
     for i in range(population_size):
-        population.append(generate_random_individual(original_layout))
+        population.append(generate_random_individual(layout_size))
 
     # Print initial population
-    print('\n'.join([''.join(['{:4}'.format(item) for item in row])
-                     for row in population]))  
+    #print('\n'.join([''.join(['{:4}'.format(item) for item in row])
+    #                 for row in population]))  
 
     
+    #best_individual=
+    #best_cost=1000000 #Big enough so its replaced by any layout cost
     generation = 0
+    generations_costs=[]
     while generation < time:
 
         # Calculates the cost of each individual
         for i in range(population_size):
-            population_costs.append(fitness(population[i]))
+            population_costs.append(fitness(population[i],distance_matrix,orders_list[0:10]))
+            generations_costs.append(population_costs[i])
 
         # Eliminates the last two individuals and make the crossover:
         population = crossover(population, population_costs)
 
         for j in range(population_size):
             r = random.uniform(0, 1)
-            if mutation_prob > r:
-                population[j] = mutation(population[j])
+            if r<mutation_prob:
+                mutation(population[j]) #No need to make population[j]=mut... because mut works with the object
 
         generation = generation + 1
+        population_costs=[]
+        
 
 
     print("The best warehouse design is: ")
     print('\n'.join([''.join(['{:4}'.format(item) for item in row])
                      for row in population])) 
 
+    print(generations_costs)
 
 
 if __name__ == '__main__':
