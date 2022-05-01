@@ -190,11 +190,12 @@ def read_file(filename, order_number):
         tmp = tmp[0:i] #Now tmp is the list of products in the specified order
         for elem in tmp:
             result.append(int(elem.replace("P", ""))) #Transform every product from string "Px" into int x
+            if 0 in result:
+                result[result.index(0)]=100
         return result
     else:
         print("Order doesn't exist")
         return False
-
 
 def main():
     #Number of annealing runs:  pop_size*time*order_list_size=6*1000*100=600k
