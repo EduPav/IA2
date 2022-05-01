@@ -201,7 +201,7 @@ def main():
     #Number of annealing runs:  pop_size*time*order_list_size=6*1000*100=600k
     #Number of possible layouts=99! 
     time = 1000  # Max amount of iterations
-    layout_size=99
+    layout_size=100
     #original layout: [1,2,3,4,5,6,7,8,....,98,99]
     population_size = 6 
     population = []
