@@ -62,7 +62,7 @@ def main():
     """
     maze = maze_designer()
 
-    nprod = 99  # Number of products (according to orders archive)
+    nprod = 100  # Number of products (according to orders archive)
     distance_matrix = []
     for i in range(nprod):  # Complexity n^2 being n the number of products in the facility
         distance_matrix.append([])  #This line adds a row.

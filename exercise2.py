@@ -1,4 +1,4 @@
-from simulated_annealing import simulated_annealing
+from Simulated_Annealing import simulated_annealing
 import matplotlib.pyplot as plt
 import csv
 
@@ -51,6 +51,8 @@ def read_file(filename, order_number):
         tmp = tmp[0:i] #Now tmp is the list of products in the specified order
         for elem in tmp:
             result.append(int(elem.replace("P", ""))) #Transform every product from string "Px" into int x
+            if 0 in result:
+                result[result.index(0)]=100
         return result
     else:
         print("Order doesn't exist")
@@ -66,16 +68,16 @@ def main():
     #Distance matrix is now a list of tuples of STRINGS
 
     #order = read_file("orders.txt", int(input("Insert order number : ")))
-    order = read_file("orders.txt", 5)
+    order = read_file("orders.txt", 4)
     print("Order to analize: "+str(order))
     
-    Kmax = 10000 #Maximum number of iterations
-    Temp0 = 10 #INITIAL TEMPERATURE
+    Kmax = 100000 #Maximum number of iterations
+    Temp0 = 50 #INITIAL TEMPERATURE
     probs,costs_evolution,best_sequence,best_cost=simulated_annealing(distance_matrix,order,Temp0,Kmax)
     print("The best sequence found is:"+str(best_sequence))
     print("Its cost is: "+str(best_cost))
     plot_costs(costs_evolution)
-    plot_probs(probs)
+    #plot_probs(probs)
     
 
 
