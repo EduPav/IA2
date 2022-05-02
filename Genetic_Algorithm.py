@@ -188,9 +188,10 @@ def read_file(filename, order_number):
         return False
 
 def main():
-    #Number of annealing runs:  pop_size*time*order_list_size=6*1000*100=600k
-    #Number of possible layouts=99! 
-    time = 1000  # Max amount of iterations
+    #Number of annealing runs:  pop_size*time*order_list_size=6*1000*100=600k  for 5 minutes in algorithm need annealing in 0,5ms
+    #Time of annealing:     Kmax
+    #Number of possible layouts=100! 
+    time = 100  # Max amount of iterations 
     layout_size=100
     #original layout: [1,2,3,4,5,6,7,8,....,98,99]
     population_size = 6 
@@ -205,7 +206,7 @@ def main():
 
     #Put all orders in a list
     orders_list=[]
-    for i in range(1,100): 
+    for i in range(1,100): #nº of orders
         order =read_file("orders.txt", i)
         orders_list.append(order)
 
@@ -252,3 +253,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+
