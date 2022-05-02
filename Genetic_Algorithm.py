@@ -1,11 +1,8 @@
 import csv
 import random
-
-from numpy import size
 from Simulated_Annealing import simulated_annealing
 
 #Save best example found
-
 # Correct language use
 # pep-8
 # Si cambias tamaño de la poblacion, cambiar population_premium.
@@ -14,11 +11,6 @@ from Simulated_Annealing import simulated_annealing
 #change layout size to 99
 #Selection of only best 3 and mix them (if kill<50% evolution is slow )
 #Fitness only using first 10 orders. Correct that. Make them random? representative? all?
-
-
-order_one = [10, 5, 8, 9, 2, 7, 1, 3, 6, 4]
-order_two = [3, 5, 8, 7, 9, 4, 6, 1, 10, 2]
-order_three = [3, 5, 8, 7, 9, 4, 6, 1]
 
 
 def generate_random_individual(layout_size):
@@ -68,8 +60,8 @@ def fitness(individual,distance_matrix,orders_to_test):
 
     order_list=[filter_order(order, individual) for order in orders_to_test]
        
-    Kmax = 10000 #Maximum number of iterations
-    Temp0 = 10 #INITIAL TEMPERATURE
+    Kmax = 1000 #Maximum number of iterations
+    Temp0 = 100 #INITIAL TEMPERATURE
     for single_order in order_list:
         _,_,_,best_cost = simulated_annealing(distance_matrix, single_order, Temp0, Kmax)
         total_cost += best_cost
@@ -112,8 +104,6 @@ def crossover(population, population_costs):
 
         junior1[a:b] = auxB
         junior2[a:b] = auxA
-        print(auxA)
-        print(auxB)
         j = 0
         k = 0
 
@@ -248,6 +238,7 @@ def main():
                 mutation(population[j]) #No need to make population[j]=mut... because mut works with the object
 
         generation = generation + 1
+        print(generation)
         population_costs=[]
         
 
