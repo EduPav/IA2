@@ -80,22 +80,27 @@ def crossover(population, population_costs):
     # POPULATION PREMIUM
 
     # Order population acording to population_costs
-    temp_list = [i for _, i in sorted(zip(population_costs, population))]
-    temp_cost = sorted(population_costs)
+    #temp_list = [i for _, i in sorted(zip(population_costs, population))]
+    #temp_cost = sorted(population_costs)
 
-    population = temp_list  # [::-1]
-    population_costs = temp_cost  # [::-1]
+    #population = temp_list  # [::-1]
+    #population_costs = temp_cost  # [::-1]
 
-    for _ in range(2):
-        min_idx = population_costs.index(max(population_costs))
-        population_costs.pop(min_idx)
-        population.pop(min_idx)
+    #for _ in range(2):
+    #    min_idx = population_costs.index(max(population_costs))
+    #    population_costs.pop(min_idx)
+    #    population.pop(min_idx)
 
-    population.append(population[0])
-    population.append(population[3])
+   # population.append(population[0])
+   # population.append(population[3])
 
-    population_costs.append(population_costs[0])
-    population_costs.append(population_costs[3])
+   # population_costs.append(population_costs[0])
+   # population_costs.append(population_costs[3])
+    
+
+     # Order population acording to population_costs
+    population = random.choices(population, weights=population_costs, k=6)
+
 
     # CROSSOVER
     juniors = []
