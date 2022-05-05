@@ -99,7 +99,20 @@ def crossover(population, population_costs):
     
 
      # Order population acording to population_costs
+    # Order population acording to population_costs
+    for i in range(len(population_costs)):
+        population_costs[i] = 1/population_costs[i]
+    #print(population_costs)
+    
     population = random.choices(population, weights=population_costs, k=6)
+    population_1 = random.choices(population, weights=population_costs, k=6)
+
+    for i in range(0, len(population), 2):
+        if population[i] == population[i+1]:
+            for j in range(len(population)):
+                if population[i+1] != population_1[j]:
+                    population[i+1] = population_1[j]
+                    break
 
 
     # CROSSOVER
