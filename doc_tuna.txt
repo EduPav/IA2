@@ -1,0 +1,13 @@
+How to get runtime chart with tuna :
+
+Install with
+
+'pip install tuna'
+
+Create a runtime profile
+
+'python -m cProfile -o program.prof filename.py'
+
+Then just run tuna on the file
+
+'tuna program.prof'
