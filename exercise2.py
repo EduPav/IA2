@@ -68,11 +68,11 @@ def main():
     #Distance matrix is now a list of tuples of STRINGS
 
     #order = read_file("orders.txt", int(input("Insert order number : ")))
-    order = read_file("orders.txt", 4)
+    order = read_file("orders.txt", 9)
     print("Order to analize: "+str(order))
     
-    Kmax = 100000 #Maximum number of iterations
-    Temp0 = 50 #INITIAL TEMPERATURE
+    Kmax = 10000 #Maximum number of iterations
+    Temp0 = 25 #INITIAL TEMPERATURE
     probs,costs_evolution,best_sequence,best_cost=simulated_annealing(distance_matrix,order,Temp0,Kmax)
     print("The best sequence found is:"+str(best_sequence))
     print("Its cost is: "+str(best_cost))

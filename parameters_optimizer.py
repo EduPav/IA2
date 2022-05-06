@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
-from simulated_annealing import simulated_annealing
+from Simulated_Annealing import simulated_annealing
 import csv
+import statistics as st
 
 #Get standard deviation also? So its not only avg plotting
 #maybe you get more random values with certain temperatures. Avg is not helping to decide
@@ -70,33 +71,49 @@ def main():
     #orders has all every single order in orders.txt with the length range determined by user
     print(str(len(orders))+" orders will be analyzed")
     #Simulated annealing parameters testing
-    Kmax = 10000 #Maximum number of iterations
-    Temp0 = 0.1 #INITIAL TEMPERATURE 
+    Kmax = 1000 #Maximum number of iterations
+    Temp0 = 25 #INITIAL TEMPERATURE 
     #10000 Kmax, 10 runs
     #1->2741,2731
     #10->2758
     #100->2746
     #1000->2746
     #10000->2730
-    num_runs=10
+    num_runs=100
     total_cost_for_temp=0
     orders_computed=0
+    minimum_cost_reference=0
+
     for order in orders:
         avg_cost=0
-        #costs_list_avg=[0]*Kmax
+        costs_list_avg=[0]*Kmax
+        best_costs_list=[]
+        best_cost_order=1000
         for _ in range(num_runs):
-            _,_,_,best_cost=simulated_annealing(distance_matrix,order,Temp0,Kmax)
-            #costs_list_avg= [i+j for i,j in zip(costs_list_avg,costs_evolution)]
+            _,costs_evolution,_,best_cost=simulated_annealing(distance_matrix,order,Temp0,Kmax)
+            costs_list_avg= [i+j for i,j in zip(costs_list_avg,costs_evolution)]
             avg_cost+=best_cost
+            best_cost_order=min([best_cost_order,best_cost])
+            #best_costs_list.append(best_cost) #To calculate the best cost avg and standard deviation
         avg_cost/=num_runs
-        #costs_list_avg=[i/num_runs for i in costs_list_avg]
+        costs_list_avg=[i/num_runs for i in costs_list_avg]
         print("Its cost is: "+str(avg_cost))
+        print(best_cost_order)
         #plt.plot(costs_list_avg)
         #plt.show()
+        #Calculate avg and standard deviation of best costs
+        #stdev=st.stdev(best_costs_list)
+        #avg=st.mean(best_costs_list)
+        #best_best=min(best_costs_list)
+        #print("95% of best costs fall between +-"+str(2*stdev))
+        #print("avg="+str(avg))
+        #
         total_cost_for_temp+=avg_cost
+        minimum_cost_reference+=best_cost_order
         orders_computed+=1
         print(str(orders_computed)+" orders have been optimized")
-    print("For Temp0="+str(Temp0)+" the total cost is "+str(total_cost_for_temp))
+    print("For Kmax="+str(Kmax)+" the total cost is "+str(total_cost_for_temp))
+    print("For Kmax="+str(Kmax)+" the minimum cost reference is "+str(minimum_cost_reference))
 
 
 
