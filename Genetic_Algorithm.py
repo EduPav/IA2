@@ -1,6 +1,8 @@
 import csv
 import random
 from Simulated_Annealing import simulated_annealing
+import matplotlib.pyplot as plt
+import numpy as np
 
 #Save best example found
 # Correct language use
@@ -14,7 +16,7 @@ from Simulated_Annealing import simulated_annealing
 
 
 def generate_random_individual(layout_size):
-    #list of 1,2,3,...98,99
+    #list of 1,2,3,...98,99,100
     individual = list(range(layout_size+1))
     individual.pop(0)
 
@@ -61,7 +63,7 @@ def fitness(individual,distance_matrix,orders_to_test):
     order_list=[filter_order(order, individual) for order in orders_to_test]
        
     Kmax = 1000 #Maximum number of iterations
-    Temp0 = 100 #INITIAL TEMPERATURE
+    Temp0 = 25 #INITIAL TEMPERATURE
     for single_order in order_list:
         _,_,_,best_cost = simulated_annealing(distance_matrix, single_order, Temp0, Kmax)
         total_cost += best_cost
@@ -217,7 +219,7 @@ def read_file(filename, order_number):
 def main():
     #Number of annealing runs:  pop_size*time*order_list_size=6*1000*100=600k
     #Number of possible layouts=99! 
-    time = 3  # Max amount of iterations
+    time = 1000  # Max amount of iterations
     layout_size=100
     #original layout: [1,2,3,4,5,6,7,8,....,98,99]
     population_size = 6 
@@ -249,13 +251,14 @@ def main():
     #best_cost=1000000 #Big enough so its replaced by any layout cost
     generation = 0
     generations_costs=[]
+    historical_costs=[]
     while generation < time:
         generations_costs=[]
         # Calculates the cost of each individual
         for i in range(population_size):
             population_costs.append(fitness(population[i],distance_matrix,orders_list[0:10]))
             generations_costs.append(population_costs[i])
-
+        historical_costs.append(generations_costs)
         if generation == 0:
             print(generations_costs)
         # Eliminates the last two individuals and make the crossover:
@@ -272,12 +275,18 @@ def main():
         
 
 
-    print("The best warehouse design is: ")
-    print('\n'.join([''.join(['{:4}'.format(item) for item in row])
-                     for row in population])) 
+    # print("The best warehouse design is: ")
+    # print('\n'.join([''.join(['{:4}'.format(item) for item in row])
+    #                  for row in population])) 
 
+    #Ploting costs evolution during generations
+    individ=[]
+    for i in range(6):
+        individ.append([generation[i]for generation in historical_costs])
     print(generations_costs)
-
+    x=np.arange(0.,time)
+    plt.plot(x,individ[0],'*',x,individ[1],'*',x,individ[2],'*',x,individ[3],'*',x,individ[4],'*',x,individ[5],'*')
+    plt.show()
 
 if __name__ == '__main__':
     main()
