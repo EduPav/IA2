@@ -4,25 +4,19 @@ import math
 #As we read distance matrix from archive we don't need a_star or the maze here.
 
 
-
 def random_permutation(order_list):
     """
     Return a neighbour sequence (list) with one permutation of the input one.
     order_list: list->Sequence of products 
     """
     random_a = random.randint(0, len(order_list)-1)  
-    random_b = random.randint(0, len(order_list)-1)
-    while(random_a==random_b): #So it doesn't pick the same product in the sequence twice
-        random_b = random.randint(0, len(order_list)-1)
 
-
-    prod_a = order_list[random_a]
-    prod_b = order_list[random_b]
-
-    order_list[random_b] = prod_a
-    order_list[random_a] = prod_b
+    aux = order_list[random_a]
+    order_list.pop(random_a)
+    order_list.append(aux)
 
     return order_list
+
 
 def temperature(Temp,dT): 
     """

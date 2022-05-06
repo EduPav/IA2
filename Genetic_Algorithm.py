@@ -72,25 +72,44 @@ def crossover(population, population_costs):
     # POPULATION PREMIUM
 
     # Order population acording to population_costs
-    temp_list = [i for _, i in sorted(zip(population_costs, population))]
-    temp_cost = sorted(population_costs)
+    #temp_list = [i for _, i in sorted(zip(population_costs, population))]
+    #temp_cost = sorted(population_costs)
 
-    population = temp_list  # [::-1]
-    population_costs = temp_cost  # [::-1]
+    #population = temp_list  # [::-1]
+    #population_costs = temp_cost  # [::-1]
 
-    for _ in range(2):
-        min_idx = population_costs.index(max(population_costs))
-        population_costs.pop(min_idx)
-        population.pop(min_idx)
+    #for _ in range(2):
+    #    min_idx = population_costs.index(max(population_costs))
+    #    population_costs.pop(min_idx)
+    #    population.pop(min_idx)
 
-    population.append(population[0])
-    population.append(population[3])
+   # population.append(population[0])
+   # population.append(population[3])
 
-    population_costs.append(population_costs[0])
-    population_costs.append(population_costs[3])
+   # population_costs.append(population_costs[0])
+   # population_costs.append(population_costs[3])
+    
+
+     # Order population acording to population_costs
+    # Order population acording to population_costs
+    for i in range(len(population_costs)):
+        population_costs[i] = 1/population_costs[i]
+    #print(population_costs)
+    
+    population = random.choices(population, weights=population_costs, k=6)
+    population_1 = random.choices(population, weights=population_costs, k=6)
+
+    for i in range(0, len(population), 2):
+        if population[i] == population[i+1]:
+            for j in range(len(population)):
+                if population[i+1] != population_1[j]:
+                    population[i+1] = population_1[j]
+                    break
+
 
     # CROSSOVER
     juniors = []
+    prueba = population[1]
     for i in range(0, len(population), 2):
         # print(len(population))
         individual_length = len(population[0])
@@ -104,6 +123,8 @@ def crossover(population, population_costs):
 
         junior1[a:b] = auxB
         junior2[a:b] = auxA
+        #print(auxA)
+        #print(auxB)
         j = 0
         k = 0
 
@@ -137,8 +158,14 @@ def crossover(population, population_costs):
 
                 if j == (individual_length):
                     break
-        juniors.append(junior1)
-        juniors.append(junior2)
+        if i == 1:
+            juniors.append(prueba)
+            juniors.append(junior2)
+        else:
+            juniors.append(junior1)
+            juniors.append(junior2)
+        #juniors.append(junior1)
+        #juniors.append(junior2)
 
     return juniors
 
@@ -188,10 +215,9 @@ def read_file(filename, order_number):
         return False
 
 def main():
-    #Number of annealing runs:  pop_size*time*order_list_size=6*1000*100=600k  for 5 minutes in algorithm need annealing in 0,5ms
-    #Time of annealing:     Kmax
-    #Number of possible layouts=100! 
-    time = 100  # Max amount of iterations 
+    #Number of annealing runs:  pop_size*time*order_list_size=6*1000*100=600k
+    #Number of possible layouts=99! 
+    time = 3  # Max amount of iterations
     layout_size=100
     #original layout: [1,2,3,4,5,6,7,8,....,98,99]
     population_size = 6 
@@ -224,12 +250,14 @@ def main():
     generation = 0
     generations_costs=[]
     while generation < time:
-
+        generations_costs=[]
         # Calculates the cost of each individual
         for i in range(population_size):
             population_costs.append(fitness(population[i],distance_matrix,orders_list[0:10]))
             generations_costs.append(population_costs[i])
 
+        if generation == 0:
+            print(generations_costs)
         # Eliminates the last two individuals and make the crossover:
         population = crossover(population, population_costs)
 
