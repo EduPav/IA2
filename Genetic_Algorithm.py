@@ -233,7 +233,7 @@ def main():
     population_costs = []
     mutation_prob = 0.01  #mutation probability
 
-    with open('IA2/distance_matrix.csv') as csvfile:
+    with open('distance_matrix.csv') as csvfile:
         rows = csv.reader(csvfile)
         distance_matrix = list(zip(*rows))
     #Distance matrix is now a list of tuples of STRINGS
@@ -241,7 +241,7 @@ def main():
     #Put all orders in a list
     orders_list=[]
     for i in range(1,100): 
-        order =read_file("IA2\orders.txt", i)
+        order =read_file("orders.txt", i)
         orders_list.append(order)
 
     # Generates initial population
