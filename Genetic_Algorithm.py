@@ -117,6 +117,7 @@ def crossover(population, population_costs):
 
     # CROSSOVER
     juniors = []
+    prueba = population[1]
     for i in range(0, len(population), 2):
         # print(len(population))
         individual_length = len(population[0])
@@ -130,8 +131,8 @@ def crossover(population, population_costs):
 
         junior1[a:b] = auxB
         junior2[a:b] = auxA
-        print(auxA)
-        print(auxB)
+        #print(auxA)
+        #print(auxB)
         j = 0
         k = 0
 
@@ -165,8 +166,14 @@ def crossover(population, population_costs):
 
                 if j == (individual_length):
                     break
-        juniors.append(junior1)
-        juniors.append(junior2)
+        if i == 1:
+            juniors.append(prueba)
+            juniors.append(junior2)
+        else:
+            juniors.append(junior1)
+            juniors.append(junior2)
+        #juniors.append(junior1)
+        #juniors.append(junior2)
 
     return juniors
 
@@ -218,7 +225,7 @@ def read_file(filename, order_number):
 def main():
     #Number of annealing runs:  pop_size*time*order_list_size=6*1000*100=600k
     #Number of possible layouts=99! 
-    time = 1000  # Max amount of iterations
+    time = 3  # Max amount of iterations
     layout_size=100
     #original layout: [1,2,3,4,5,6,7,8,....,98,99]
     population_size = 6 
@@ -226,7 +233,7 @@ def main():
     population_costs = []
     mutation_prob = 0.01  #mutation probability
 
-    with open('distance_matrix.csv') as csvfile:
+    with open('IA2/distance_matrix.csv') as csvfile:
         rows = csv.reader(csvfile)
         distance_matrix = list(zip(*rows))
     #Distance matrix is now a list of tuples of STRINGS
@@ -234,7 +241,7 @@ def main():
     #Put all orders in a list
     orders_list=[]
     for i in range(1,100): 
-        order =read_file("orders.txt", i)
+        order =read_file("IA2\orders.txt", i)
         orders_list.append(order)
 
     # Generates initial population
@@ -251,12 +258,14 @@ def main():
     generation = 0
     generations_costs=[]
     while generation < time:
-
+        generations_costs=[]
         # Calculates the cost of each individual
         for i in range(population_size):
             population_costs.append(fitness(population[i],distance_matrix,orders_list[0:10]))
             generations_costs.append(population_costs[i])
 
+        if generation == 0:
+            print(generations_costs)
         # Eliminates the last two individuals and make the crossover:
         population = crossover(population, population_costs)
 
