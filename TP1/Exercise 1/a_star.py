@@ -1,5 +1,4 @@
 
-
 class Node:
     def __init__(self, parent = None, position = None):
         self.parent = parent
@@ -10,8 +9,12 @@ class Node:
     def __eq__(self, other):
         return self.position == other.position
 
-def heuristic(cell1, cell2):  
-    """Returns manhattan distance"""
+def heuristic(cell1, cell2):
+    """
+    Returns manhattan distance between two cells
+    cell1: tuple -> coordinates of the first node
+    cell2: tuple -> coordinates of the second node
+    """
     x1, y1 = cell1
     x2, y2 = cell2
 
@@ -19,7 +22,12 @@ def heuristic(cell1, cell2):
 
 
 def A_Star(maze, start, end):
-    """Returns shortest path from start to end"""
+    """
+    Returns shortest path from start to end or -1 in case of error
+    maze: list of lists -> representing the warehouse config
+    start: Node -> node from which search starts
+    end: Node -> node where search ends
+    """
 
     start_node = Node(None, start)
     start_node.h = heuristic(start, end)
@@ -99,9 +107,6 @@ def A_Star(maze, start, end):
             if inOpenList:
                 continue
             open_list.append(leave)
+    return -1
 
-
-
-
-
-    
+   
