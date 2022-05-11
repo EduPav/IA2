@@ -72,7 +72,7 @@ def fitness(individual,distance_matrix,orders_to_test):
 def crossover(population, population_costs):
 
     # POPULATION PREMIUM
-
+#PRUEBA N°1:
     # Order population acording to population_costs
     #temp_list = [i for _, i in sorted(zip(population_costs, population))]
     #temp_cost = sorted(population_costs)
@@ -92,7 +92,25 @@ def crossover(population, population_costs):
    # population_costs.append(population_costs[3])
     
 
-     # Order population acording to population_costs
+#PRUEBA N°2:
+    #prob = [0.858, 0.716, 0.574, 0.432, 0.29, 0.148]
+
+    # Order population acording to population_costs
+    # for i in range(len(population_costs)):
+    #    population_costs[i] = 1/population_costs[i]
+    # #print(population_costs)
+    
+    # population = random.choices(population, weights=prob, k=6)
+    # population_1 = random.choices(population, weights=prob, k=6)
+
+    # for i in range(0, len(population), 2):
+    #    if population[i] == population[i+1]:
+    #        for j in range(len(population)):
+    #            if population[i+1] != population_1[j]:
+    #                population[i+1] = population_1[j]
+    #                break
+
+#PRUEBA N°3:
     # Order population acording to population_costs
     for i in range(len(population_costs)):
         population_costs[i] = 1/population_costs[i]
@@ -160,14 +178,14 @@ def crossover(population, population_costs):
 
                 if j == (individual_length):
                     break
-        if i == 1:
-            juniors.append(prueba)
-            juniors.append(junior2)
-        else:
-            juniors.append(junior1)
-            juniors.append(junior2)
-        #juniors.append(junior1)
-        #juniors.append(junior2)
+        # if i == 1:
+        #     juniors.append(prueba)
+        #     juniors.append(junior2)
+        # else:
+        #     juniors.append(junior1)
+        #     juniors.append(junior2)
+        juniors.append(junior1)
+        juniors.append(junior2)
 
     return juniors
 
