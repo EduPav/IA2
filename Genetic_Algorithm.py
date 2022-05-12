@@ -5,14 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 #Save best example found
-# Correct language use
 # pep-8
-# Si cambias tamaño de la poblacion, cambiar population_premium.
-# Be careful. Crossover strongly depends on the population size
 #Separate Genetic algorithm from exercise 3
-#change layout size to 99
-#Selection of only best 3 and mix them (if kill<50% evolution is slow )
-#Fitness only using first 10 orders. Correct that. Make them random? representative? all?
 
 
 def generate_random_individual(layout_size):
@@ -235,9 +229,9 @@ def read_file(filename, order_number):
         return False
 
 def main():
-    #Number of annealing runs:  pop_size*time*order_list_size=6*1000*100=600k
+    #Number of annealing runs:  pop_size*itmax*order_list_size=6*1000*100=600k
     #Number of possible layouts=99! 
-    time = 1000  # Max amount of iterations
+    itmax = 100  # Max amount of iterations
     layout_size=100
     #original layout: [1,2,3,4,5,6,7,8,....,98,99]
     population_size = 6 
@@ -266,19 +260,22 @@ def main():
 
     
     #best_individual=
-    #best_cost=1000000 #Big enough so its replaced by any layout cost
+    best_cost=1000000 #Big enough so its replaced by any layout cost
     generation = 0
-    generations_costs=[]
     historical_costs=[]
-    while generation < time:
+    while generation < itmax:
         generations_costs=[]
         # Calculates the cost of each individual
         for i in range(population_size):
-            population_costs.append(fitness(population[i],distance_matrix,orders_list[0:10]))
+            population_costs.append(fitness(population[i],distance_matrix,orders_list[0:100]))
             generations_costs.append(population_costs[i])
+            if best_cost>population_costs[i]:
+                best_indiv=population[i]
+                best_cost=population_costs[i]
+            
         historical_costs.append(generations_costs)
         if generation == 0:
-            print(generations_costs)
+            print(generations_costs) #Print costs of starting random generation
         # Eliminates the last two individuals and make the crossover:
         population = crossover(population, population_costs)
 
@@ -293,18 +290,26 @@ def main():
         
 
 
-    # print("The best warehouse design is: ")
-    # print('\n'.join([''.join(['{:4}'.format(item) for item in row])
-    #                  for row in population])) 
+    
+    print("The best layout found is:"+str(best_indiv))
+    print("Its cost is: "+str(best_cost))
 
     #Ploting costs evolution during generations
     individ=[]
+
     for i in range(6):
         individ.append([generation[i]for generation in historical_costs])
     print(generations_costs)
-    x=np.arange(0.,time)
+    x=np.arange(0.,itmax)
     plt.plot(x,individ[0],'*',x,individ[1],'*',x,individ[2],'*',x,individ[3],'*',x,individ[4],'*',x,individ[5],'*')
     plt.show()
+    
+    #I don't think this is going to work with our individual structure
+    #print("The best warehouse design is: ")
+    #print('\n'.join([''.join(['{:4}'.format(item) for item in row])
+    #                 for row in population])) 
+    
+
 
 if __name__ == '__main__':
     main()
