@@ -71,13 +71,13 @@ def main():
     order = read_file("orders.txt", 9)
     print("Order to analize: "+str(order))
     
-    Kmax = 10000 #Maximum number of iterations
+    Kmax = 1000 #Maximum number of iterations
     Temp0 = 25 #INITIAL TEMPERATURE
     probs,costs_evolution,best_sequence,best_cost=simulated_annealing(distance_matrix,order,Temp0,Kmax)
     print("The best sequence found is:"+str(best_sequence))
     print("Its cost is: "+str(best_cost))
     plot_costs(costs_evolution)
-    #plot_probs(probs)
+    plot_probs(probs)
     
 
 

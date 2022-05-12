@@ -1,8 +1,6 @@
 import random
 import math
 
-#As we read distance matrix from archive we don't need a_star or the maze here.
-
 
 def random_permutation(order_list):
     """
@@ -86,3 +84,4 @@ def simulated_annealing(distances, sequence,T,Kmax):
         T=temperature(T, dT) #Reduces temperature
         costs_evolution.append(current_cost)
     return probs,costs_evolution,best_sequence,best_cost #Best picking sequence and its cost
+    
