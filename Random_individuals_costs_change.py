@@ -53,15 +53,16 @@ def fitness(individual,distance_matrix,orders_to_test):
     """
     order_list = []
     total_cost = 0
-
     order_list=[filter_order(order, individual) for order in orders_to_test]
-       
+    
     Kmax = 1000 #Maximum number of iterations
     Temp0 = 25 #INITIAL TEMPERATURE
+    cost_per_order=[]
     for single_order in order_list:
         _,_,_,best_cost = simulated_annealing(distance_matrix, single_order, Temp0, Kmax)
+        cost_per_order.append(best_cost)
         total_cost += best_cost
-    return total_cost
+    return total_cost,cost_per_order
 
 def crossover(population, population_costs):
 
@@ -246,72 +247,31 @@ def main():
 
     #Put all orders in a list
     orders_list=[]
-    for i in range(1,100): #nº of orders
+    for i in range(1,101): #nº of orders
         order =read_file("orders.txt", i)
         orders_list.append(order)
 
     # Generates initial population
+    x=[i+1 for i in range(100)]
+    fig, axs = plt.subplots(2, 3)
     for i in range(population_size):
         population.append(generate_random_individual(layout_size))
-        
-
-    # Print initial population
-    #print('\n'.join([''.join(['{:4}'.format(item) for item in row])
-    #                 for row in population]))  
-
+        #print(population[i])
+        Tcost,orders_costs=fitness(population[i],distance_matrix,orders_list[0:100])
+        print(Tcost)
+        orders_costs=np.array(orders_costs)*100/Tcost
+        if i==0:
+            ref_costs=orders_costs.copy()
+        else:
+            orders_costs-=ref_costs
+        if i<=2:
+            axs[0, i].bar(x, orders_costs)
+            axs[0, i].set_title(Tcost)
+        else:
+            axs[1,i-3].bar(x, orders_costs)
+            axs[1,i-3].set_title(Tcost)
+    plt.show() 
     
-    #best_individual=
-    best_cost=1000000 #Big enough so its replaced by any layout cost
-    generation = 0
-    historical_costs=[]
-    while generation < itmax:
-        generations_costs=[]
-        # Calculates the cost of each individual
-        for i in range(population_size):
-            population_costs.append(fitness(population[i],distance_matrix,orders_list[0:100]))
-            generations_costs.append(population_costs[i])
-            if best_cost>population_costs[i]:
-                best_indiv=population[i]
-                best_cost=population_costs[i]
-            
-        historical_costs.append(generations_costs)
-        if generation == 0:
-            print(generations_costs) #Print costs of starting random generation
-        # Eliminates the last two individuals and make the crossover:
-        population = crossover(population, population_costs)
-
-        for j in range(population_size):
-            r = random.uniform(0, 1)
-            if r<mutation_prob:
-                mutation(population[j]) #No need to make population[j]=mut... because mut works with the object
-
-        generation = generation + 1
-        print(generation)
-        population_costs=[]
-        
-
-
-    
-    print("The best layout found is:"+str(best_indiv))
-    print("Its cost is: "+str(best_cost))
-
-    #Ploting costs evolution during generations
-    individ=[]
-
-    for i in range(6):
-        individ.append([generation[i]for generation in historical_costs])
-    print(generations_costs)
-    x=np.arange(0.,itmax)
-    plt.plot(x,individ[0],'*',x,individ[1],'*',x,individ[2],'*',x,individ[3],'*',x,individ[4],'*',x,individ[5],'*')
-    plt.show()
-    
-    #I don't think this is going to work with our individual structure
-    #print("The best warehouse design is: ")
-    #print('\n'.join([''.join(['{:4}'.format(item) for item in row])
-    #                 for row in population])) 
-    
-
-
 if __name__ == '__main__':
     main()
 
