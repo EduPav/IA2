@@ -63,11 +63,10 @@ def main():
     print(str(len(orders))+" orders will be analyzed")
     #Simulated annealing parameters testing
     Kmax = 1000 #Maximum number of iterations
-    Temp0 = 25 #INITIAL TEMPERATURE 
     num_runs=100
     orders_computed=0
     
-
+    #100Simulated/orden*1000it/Simulated*10orden/Temp*8Temp= 8 Millones it
     tot_cost_list=[]
     avg_stdev_list=[]
     Temp_list=[2.5,15,20,25,30,35,250,2500]
@@ -85,7 +84,7 @@ def main():
             #print("Its cost is: "+str(avg_cost))
             #Calculate avg and standard deviation of best costs
             stdev=st.stdev(costs_along_runs)
-            avg=st.mean(costs_along_runs)
+            #avg=st.mean(costs_along_runs)
             #print("95% of best costs fall between +-"+str(2*stdev))
             #print("avg="+str(avg))
             #
