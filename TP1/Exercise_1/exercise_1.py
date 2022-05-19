@@ -1,4 +1,4 @@
-from a_star import A_Star
+from a_star import a_star
 import pygame   #For graphic display
 pygame.init()
 
@@ -15,7 +15,15 @@ pygame.display.set_caption("A STAR algorithm, Exercise 1") #Caption for the disp
 
 
 def input_coordinates(maze, position = None):
-    """Asks for valid coordinates to user and returns them"""
+    """Asks user for coordinates and returns tuples or errors
+
+    Args:
+        maze (list of lists): Warehouse configuration
+        position (str, optional): string of 'start' or 'end'. Defaults to None.
+ 
+    Returns:
+        list: list of x,y selected coordinate
+    """
     #Reads coordinates
     values = []
     if(position == "end"):
@@ -40,6 +48,13 @@ def input_coordinates(maze, position = None):
 
 
 def draw_grid(win, rows, width):
+    """Draws the grid lines according to the number of rows and columns decided.
+
+    Args:
+        win: Display
+        rows (int): Number of rows
+        width (int): Number of columns
+    """
     GAP = width//rows
     for i in range(rows):
         pygame.draw.line(win, GREY, (0 , i*GAP), (width , i*GAP))  #Here we draw the horizontal lines 
@@ -47,22 +62,44 @@ def draw_grid(win, rows, width):
             pygame.draw.line(win, GREY, (j*GAP , 0), (j*GAP , width))  #Here we draw the vertical lines
 
 def draw(win, x, y, width, color):
-    """Paints a square"""
+    """Paints a square
+
+    Args:
+        win: Display
+        x (int): superior left x coordinate of the square
+        y (int): superior left y coordinate of the square
+        width (int): width of the square
+        color (tuple): color hex tuple to paint the square
+    """
     pygame.draw.rect(win, color, (x, y, width, width))
 
 
 
 def draw_Start_End(start, end):
-    """Paints squares in start and end positions"""
+    """Paints squares in start and end positions
+
+    Args:
+        start (tuple): start position
+        end (tuple): end position
+    """
     draw(Win, start[1]*37.5, start[0]*37.5, 37.5, TURQUOISE)
     draw(Win, end[1]*37, end[0]*37, 37.5, ORANGE)
 
 def draw_maze(x, y):
-    """Paints a barrier"""
+    """Paints a barrier
+
+    Args:
+        x (int): x coordinate of the barrier
+        y (int): y coordinate of the barrier
+    """
     draw(Win, x*37, y*37, 37.5, BLACK)
 
 def draw_path(path):
-    """Paints list of coordinates"""
+    """Paints a path
+
+    Args:
+        path (list): List of positions to paint
+    """
     for x in range (len(path)):
         if x > 0 and x < len(path)-1:
             y, x = path[x]
@@ -72,6 +109,7 @@ def draw_path(path):
 
 if __name__ == '__main__':
 
+#Warehouse configuration
     maze = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 1, 1, 0, 1, 1, 0, 1, 1, 0],
             [0, 1, 1, 0, 1, 1, 0, 1, 1, 0],
@@ -102,7 +140,7 @@ if __name__ == '__main__':
     start = (start_position[0], start_position[1])   #(ROW,COLUMN)//(Y,X)
     end = (end_position[0], end_position[1])
 
-    path = A_Star(maze, start, end)
+    path = a_star(maze, start, end)
     print(path)
     y = len(maze[0])
     x = len(maze)
