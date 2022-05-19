@@ -105,7 +105,7 @@ def main():
     plt.plot(Temp_list,tot_cost_list)
     plt.title("Final cost vs Temperature")
     plt.xlabel('Temperature')
-    plt.ylabel('Cost of ' + str(num_orders) + 'orders')
+    plt.ylabel('Cost of ' + str(num_orders) + ' orders')
     plt.show()
     plt.plot(Temp_list,avg_stdev_list)
     plt.title("Standard deviations with each temperature")
