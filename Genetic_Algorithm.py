@@ -10,6 +10,14 @@ import numpy as np
 
 
 def generate_random_individual(layout_size):
+    """_summary_
+
+    Args:
+        layout_size (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     #list of 1,2,3,...98,99,100
     individual = list(range(layout_size+1))
     individual.pop(0)
@@ -64,6 +72,12 @@ def fitness(individual,distance_matrix,orders_to_test):
     return total_cost
 
 def crossover(population, population_costs):
+    """_summary_
+
+    Args:
+        population (_type_): _description_
+        population_costs (_type_): _description_
+    """
 
     # POPULATION PREMIUM
 #PRUEBA N°1:
@@ -200,9 +214,14 @@ def mutation(individual):
 
 def read_file(filename, order_number):
     """
-    Read "filename" file to return the "order_number"º products list
-    filename: string->Name of the file to read
-    order_number: int->Number of order to read from the file.
+    Read "filename" file to return the "order_number" products list
+
+    Args:
+        filename (string): Name of the file to read
+        order_number (int): Number of order to read from the file
+
+    Returns:
+        list: List of products for one order
     """
     result = []
     tmp = []
