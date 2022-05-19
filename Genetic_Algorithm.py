@@ -303,6 +303,9 @@ def main():
     print(generations_costs)
     x=np.arange(0.,itmax)
     plt.plot(x,individ[0],'*',x,individ[1],'*',x,individ[2],'*',x,individ[3],'*',x,individ[4],'*',x,individ[5],'*')
+    plt.ylabel('Fitness') #set the label for y axis
+    plt.xlabel('Generations') #set the label for x-axis
+    plt.title('Fitness evolution')
     plt.show()
     
     #I don't think this is going to work with our individual structure

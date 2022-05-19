@@ -267,11 +267,16 @@ def main():
         if i<=2:
             axs[0, i].bar(x, orders_costs)
             axs[0, i].set_title(Tcost)
+            plt.ylabel('Percentage respect total cost') #set the label for y axis
+            plt.xlabel('Orders') #set the label for x-axis
         else:
             axs[1,i-3].bar(x, orders_costs)
             axs[1,i-3].set_title(Tcost)
+            plt.ylabel('Percentage variation respect total cost') #set the label for y axis
+            plt.xlabel('Orders') #set the label for x-axis
     plt.show() 
     
+
 if __name__ == '__main__':
     main()
 
