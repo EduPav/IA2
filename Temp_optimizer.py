@@ -5,9 +5,12 @@ import statistics as st
 
 def read_file(file_name, order_number):
     """
-    Read "filename" file to return the "order_number"º products list
-    filename: string->Name of the file to read
-    order_number: int->Number of order to read from the file.
+    Args:
+        file_name (string): Name of the file to read
+        order_number (int): Number of order to read from the file.
+
+    Returns:
+        _list_: "order_number"º products list in "filename" file 
     """
     result = []
     tmp = []
@@ -32,6 +35,14 @@ def read_file(file_name, order_number):
         return False
 
 def orders_length(file_name):
+    """Returns a list with the orders' lenghts 
+
+    Args:
+        file_name (string): file to read from
+
+    Returns:
+        list: Length of each order in the file
+    """
     lengths=[]
     for i in range(100):
         order=read_file(file_name,i+1)
@@ -42,6 +53,10 @@ def orders_length(file_name):
 
 
 def main():
+    """
+    Tries 8 temp values for 4 length intervals. 
+    Helps user identify optimal initialization temperature for each length interval
+    """
     #Read external archive
     with open('distance_matrix.csv') as csvfile:
         rows = csv.reader(csvfile)
