@@ -60,7 +60,9 @@ def main():
         if case1 or case2 or case3 or case4:
             orders.append(order)
     #orders has all every single order in orders.txt with the length range determined by user
-    print(str(len(orders))+" orders will be analyzed")
+    num_orders = len(orders)
+    print(str(num_orders)+" orders will be analyzed")
+
     #Simulated annealing parameters testing
     Kmax = 1000 #Maximum number of iterations
     num_runs=100
@@ -102,9 +104,13 @@ def main():
     print("stdev_avg: "+str(avg_stdev_list))
     plt.plot(Temp_list,tot_cost_list)
     plt.title("Final cost vs Temperature")
+    plt.xlabel('Temperature')
+    plt.ylabel('Cost of ' + str(num_orders) + 'orders')
     plt.show()
     plt.plot(Temp_list,avg_stdev_list)
     plt.title("Standard deviations with each temperature")
+    plt.xlabel('Temperature')
+    plt.ylabel('Standard deviations')
     plt.show()
 
 
