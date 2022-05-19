@@ -10,13 +10,14 @@ import numpy as np
 
 
 def generate_random_individual(layout_size):
-    """_summary_
+    """
+    Returns a list of products corresponding to an individual
 
     Args:
-        layout_size (_type_): _description_
+        layout_size (int): cantidad de productos
 
     Returns:
-        _type_: _description_
+        list[int]: list of products
     """
     # list of 1,2,3,...98,99,100
     individual = list(range(layout_size+1))
@@ -51,7 +52,7 @@ def filter_order(order_sequence, individual):
 
 
 def fitness(individual, distance_matrix, orders_to_test):
-    """calculates the cost of orders for each order, for one individual
+    """returns the cost of orders for each order, for one individual
 
     Args:
         individual (list): warehouse layout
@@ -74,51 +75,15 @@ def fitness(individual, distance_matrix, orders_to_test):
 
 
 def crossover(population, population_costs):
-    """_summary_
+    """Returns the list of children of the population
 
     Args:
-        population (_type_): _description_
-        population_costs (_type_): _description_
+        population (list): list of individuals
+        population_costs (list[int]): list of costs of each individual
+        
+    Returns:
+        list: list of children of the population
     """
-
-    # POPULATION PREMIUM
-# PRUEBA N°1:
-    # Order population acording to population_costs
-    #temp_list = [i for _, i in sorted(zip(population_costs, population))]
-    #temp_cost = sorted(population_costs)
-
-    # population = temp_list  # [::-1]
-    # population_costs = temp_cost  # [::-1]
-
-    # for _ in range(2):
-    #    min_idx = population_costs.index(max(population_costs))
-    #    population_costs.pop(min_idx)
-    #    population.pop(min_idx)
-
-   # population.append(population[0])
-   # population.append(population[3])
-
-   # population_costs.append(population_costs[0])
-   # population_costs.append(population_costs[3])
-
-
-# PRUEBA N°2:
-    #prob = [0.858, 0.716, 0.574, 0.432, 0.29, 0.148]
-
-    # Order population acording to population_costs
-    # for i in range(len(population_costs)):
-    #    population_costs[i] = 1/population_costs[i]
-    # #print(population_costs)
-
-    # population = random.choices(population, weights=prob, k=6)
-    # population_1 = random.choices(population, weights=prob, k=6)
-
-    # for i in range(0, len(population), 2):
-    #    if population[i] == population[i+1]:
-    #        for j in range(len(population)):
-    #            if population[i+1] != population_1[j]:
-    #                population[i+1] = population_1[j]
-    #                break
 
 # PRUEBA N°3:
     # Order population acording to population_costs
@@ -138,7 +103,6 @@ def crossover(population, population_costs):
 
     # CROSSOVER
     juniors = []
-    prueba = population[1]
     for i in range(0, len(population), 2):
         # print(len(population))
         individual_length = len(population[0])
@@ -187,12 +151,6 @@ def crossover(population, population_costs):
 
                 if j == (individual_length):
                     break
-        # if i == 1:
-        #     juniors.append(prueba)
-        #     juniors.append(junior2)
-        # else:
-        #     juniors.append(junior1)
-        #     juniors.append(junior2)
         juniors.append(junior1)
         juniors.append(junior2)
 
@@ -200,6 +158,14 @@ def crossover(population, population_costs):
 
 
 def mutation(individual):
+    """returns a list of products which is a mutated individual
+
+    Args:
+        individual (list): layout
+
+    Returns:
+        list: list of products
+    """
     random_a = random.randint(0, len(individual)-1)
     random_b = random.randint(0, len(individual)-1)
     while(random_b == random_a):
