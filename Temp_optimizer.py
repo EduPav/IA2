@@ -5,6 +5,7 @@ import statistics as st
 
 def read_file(file_name, order_number):
     """
+    Returns an order in the file
     Args:
         file_name (string): Name of the file to read
         order_number (int): Number of order to read from the file.

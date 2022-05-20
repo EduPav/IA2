@@ -69,7 +69,7 @@ def closest_valid_position(prod_num, pos):
 def main():
     """
     Designs of the shortest distances matrix between each pair of products.}
-    WriteS output to "Distance_matrix.csv" archive
+    Writes output to "Distance_matrix.csv" archive
     """
    
  

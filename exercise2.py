@@ -4,40 +4,46 @@ import csv
 
 
 def plot_costs(costs_list):
-    """
-    Plot the costs list vs its place in the list
-    costs_list: list-> Cost values
+    """  Plots the costs list vs its place in the list
+
+    Args:
+        costs_list (list): Cost values
     """
     plt.plot(costs_list, color='magenta', marker='o' ) #plot the data
 
     plt.ylabel('costs') #set the label for y axis
     plt.xlabel('iteration') #set the label for x-axis
-    plt.title("Simulated annealing") #set the title of the graph
+    plt.title("Simulated annealing costs along iterations") #set the title of the graph
     plt.show() #display the graph
 
 def plot_probs(probs_list):
-    """
-    Plot the probs list vs its place in the list
-    probs_list: list-> probability values
+    """Plots the probs list vs its place in the list
+
+    Args:
+        probs_list (list): probability values
     """
     plt.plot(probs_list, color='magenta', marker='o' ) #plot the data
 
     plt.ylabel('Probability') #set the label for y axis
     plt.xlabel('Iteration') #set the label for x-axis
-    plt.title("Simulated annealing") #set the title of the graph
+    plt.title("Simulated annealing probs along iterations") #set the title of the graph
     plt.show() #display the graph
 
-def read_file(filename, order_number):
+def read_file(file_name, order_number):
     """
-    Read "filename" file to return the "order_number"º products list
-    filename: string->Name of the file to read
-    order_number: int->Number of order to read from the file.
+    Returns an order in the file
+    Args:
+        file_name (string): Name of the file to read
+        order_number (int): Number of order to read from the file.
+
+    Returns:
+        _list_: "order_number"º products list in "filename" file 
     """
     result = []
     tmp = []
     if order_number >= 0 and order_number <= 100:
         command = "Order " + str(order_number)
-        with open(filename, 'r') as f:
+        with open(file_name, 'r') as f:
             for line in f:
                 tmp.append(line.strip()) #Build list of every line in the archive
         index_command = tmp.index(command)+1 #Get the index where the order specified starts
@@ -50,8 +56,6 @@ def read_file(filename, order_number):
         tmp = tmp[0:i] #Now tmp is the list of products in the specified order
         for elem in tmp:
             result.append(int(elem.replace("P", ""))) #Transform every product from string "Px" into int x
-            if 0 in result:
-                result[result.index(0)]=100
         return result
     else:
         print("Order doesn't exist")
@@ -78,7 +82,6 @@ def main():
     plot_costs(costs_evolution)
     plot_probs(probs)
     
-
-
 if __name__ == '__main__':
     main()
+
