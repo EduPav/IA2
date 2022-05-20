@@ -4,10 +4,6 @@ from Simulated_Annealing import simulated_annealing
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Save best example found
-# pep-8
-# Separate Genetic algorithm from exercise 3
-
 
 def generate_random_individual(layout_size):
     """
@@ -233,7 +229,7 @@ def main():
     population_costs = []
     mutation_prob = 0.01  # mutation probability
 
-    with open('distance_matrix.csv') as csvfile:
+    with open('TP1/Exercise_3/distance_matrix.csv') as csvfile:
         rows = csv.reader(csvfile)
         distance_matrix = list(zip(*rows))
     # Distance matrix is now a list of tuples of STRINGS
@@ -241,7 +237,7 @@ def main():
     # Put all orders in a list
     orders_list = []
     for i in range(1, 100):  # nº of orders
-        order = read_file("orders.txt", i)
+        order = read_file("TP1/Exercise_3/orders.txt", i)
         orders_list.append(order)
 
     # Generates initial population
@@ -300,11 +296,6 @@ def main():
     plt.xlabel('Generations') #set the label for x-axis
     plt.title('Fitness evolution')
     plt.show()
-
-    # I don't think this is going to work with our individual structure
-    #print("The best warehouse design is: ")
-    # print('\n'.join([''.join(['{:4}'.format(item) for item in row])
-    #                 for row in population]))
 
 
 if __name__ == '__main__':
