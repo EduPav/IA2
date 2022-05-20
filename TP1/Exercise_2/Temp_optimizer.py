@@ -59,7 +59,7 @@ def main():
     Helps user identify optimal initialization temperature for each length interval
     """
     #Read external archive
-    with open('distance_matrix.csv') as csvfile:
+    with open('TP1/Exercise_2/distance_matrix.csv') as csvfile:
         rows = csv.reader(csvfile)
         distance_matrix = list(zip(*rows))
     
@@ -68,7 +68,7 @@ def main():
     case=input("choose lengths to analize for optimal temp\n1:<15\n2:15-19\n3:20-23\n4:23<\nYour pick: ")
     orders=[]
     for i in range(100):
-        order = read_file("orders.txt", i+1)
+        order = read_file("TP1/Exercise_2/orders.txt", i+1)
         case1=(case=='1' and len(order)<15)
         case2=(case=='2' and len(order)>=15 and len(order)<=19)
         case3=(case=='3' and len(order)>=20 and len(order)<=23)

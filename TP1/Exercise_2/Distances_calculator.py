@@ -91,7 +91,7 @@ def main():
             distance_matrix[i].append(ab_path_len) #Add one distance to current row
 
     #Write distance_matrix list of lists to the archive
-    with open("distance_matrix.csv", "w", newline='') as f:
+    with open("TP1/Exercise_2/distance_matrix.csv", "w", newline='') as f:
         wr = csv.writer(f)
         wr.writerows(distance_matrix)
 

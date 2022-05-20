@@ -65,13 +65,13 @@ def read_file(file_name, order_number):
 def main():
     #it=input("Insert number of random initializations")
     #In case we want to run it with random initializations
-    with open('distance_matrix.csv') as csvfile:
+    with open('TP1/Exercise_2/distance_matrix.csv') as csvfile:
         rows = csv.reader(csvfile)
         distance_matrix = list(zip(*rows))
     #Distance matrix is now a list of tuples of STRINGS
 
     #order = read_file("orders.txt", int(input("Insert order number : ")))
-    order = read_file("orders.txt", 9)
+    order = read_file("TP1/Exercise_2/orders.txt", 9)
     print("Order to analize: "+str(order))
     
     Kmax = 1000 #Maximum number of iterations
