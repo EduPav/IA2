@@ -14,10 +14,14 @@ do(maintenance):-
     verify(safety_appropriate);
     verify(replace_safety_spring);
     verify(clean_fix_sensing_pipes);
-    verify(adjust_regulator).
+    verify(adjust_regulator);
     %Not added a ! at the end of each because there might be other instructions in headset's branches.
     %Right use of this sentence implies selecting ";" after each instruction in CLI.
-
+    verify(report_to_inspection);
+    verify(is_reported_to_inspection);
+    verify(coordinate_to_render_and_color);
+    verify(report_to_repair_department).
+    
 %Error in duplicate status values check
 status_error(check):-
     status(X,Y), status(X,Z), dif(Y,Z), writeln(X), writeln('has 2 status values. It should have exactly one for the KB to work properly'),!.
@@ -71,6 +75,31 @@ verify(adjust_regulator):-
     status(line_gas_pressure_appropriate, unknown), writeln('Please, check if line gas pressure is appropriate'), !;
     status(line_gas_pressure_appropriate, no), verify(line_gas_pressure_appropriate), writeln('Adjust the regulator according to the instructions').
 
+%   Left
+verify(is_reported_to_inspection):-
+    status(thickness_under_threshold_limit, unknown), writeln('Please check if thickness is less than the threshold limit'), !;
+    status(thickness_under_threshold_limit, yes), verify(thickness_under_threshold_limit), writeln('Equipment status will be reported to the technical inspection unit immediately').
+
+verify(suitable_equipment_condition):-
+    status(thickness_under_threshold_limit, unknown), writeln('Please check if thickness is less than the threshold limit'), !;
+    status(thickness_under_threshold_limit, no), verify(thickness_under_threshold_limit), writeln('The condition of the equipment is suitable').
+
+verify(coordinate_to_render_and_color):-
+    status(safety_valve_body_pipes_joints_dazzling_rusting, unknown), writeln('Please check if the safety valve body, pipes and joints have the effects of dazzling and rusting.'), !;
+    status(safety_valve_body_pipes_joints_dazzling_rusting, yes), verify(safety_valve_body_pipes_joints_dazzling_rusting), writeln('Coordination is requiered in order to render and color the equipment').
+
+%   Right
+verify(report_to_repair_department):-
+    status(leakage_fixed_with_wrench, unknown), writeln('Please, check if the leakage is fixed with the wrench at joints'), !;
+    status(leakage_fixed_with_wrench, no), verify(leakage_fixed_with_wrench), writeln('Send a report to the repair department to fix the fault').
+
+verify(report_to_inspection):-
+    status(leakage_fixed_with_wrench, unknown), writeln('Please check if the leakage is fixed with the wrench at joints'), !;
+    status(leakage_fixed_with_wrench, yes), verify(leakage_fixed_with_wrench), writeln('Report to Technical Inspection Unit').
+
+verify(safety_valve_no_gas_leakage):-
+    status(gas_leakage_joint, unknown), writeln('Please check if there is a gas leakage at joint.'), !;
+    status(gas_leakage_joint, no), verify(gas_leakage_joint), writeln('The safety valve joint is free of gas leakage').
 
 
 %Question nodes
@@ -125,6 +154,16 @@ verify(line_gas_pressure_appropriate):-
         status(safety_valve_continuous_gas_evacuation, no).
     */
 
+%   Left
+verify(thickness_under_threshold_limit):-
+    status(safety_valve_body_pipes_joints_dazzling_rusting, unknown), writeln('Please check if the safety valve body, pipes and joints have the effects of dazzling and rusting.'), false, !;
+    status(safety_valve_body_pipes_joints_dazzling_rusting, no).
+
+%   Right
+verify(leakage_fixed_with_wrench):-
+    status(gas_leakage_joint, unknown), writeln('Please checkif there is a gas leakage at joint'), false, !;
+    status(gas_leakage_joint, yes). 
+
 
 %GROUND FACTS
 %   Middle Left
@@ -142,6 +181,13 @@ status(safety_spring_effective,unknown).
 status(control_pressure_sensor_pipes_blocked,yes).
 status(line_gas_pressure_appropriate,yes).
 
+%   Left
+status(suitable_equipment_condition, yes).
+status(thickness_under_threshold_limit, no).
+status(safety_valve_body_pipes_joints_dazzling_rusting, no).
+%   Right
+status(safety_valve_no_gas_leakage, yes).
+status(gas_leakage_joint, no).
 
 
 %Notes:
@@ -150,7 +196,6 @@ status(line_gas_pressure_appropriate,yes).
 
 
 %Pending tasks
-    %Add Klara branches
     %Probar que TODAS las combinaciones de ground facts den la instrucción correcta.
     %When read, delete all EComments
 
