@@ -1,34 +1,30 @@
-%verify(maintenance):- 
-%    status(safety_valve_continuous_gas_evacuation,yes),verify()
+%KNOWLEDGE BASE (all the code)
+
+%AXIOMS
+
+%General Maintenance
+do(maintenance):-
+    status_error(check),!;
+    verify(set_safety_valve);
+    verify(pilot_full_service);
+    verify(replace_sit_orifice);
+    verify(spring_safety_to_service);
+    verify(clean_sensing_pipes);
+    verify(safety_valve_to_open);
+    verify(safety_appropriate);
+    verify(replace_safety_spring);
+    verify(clean_fix_sensing_pipes);
+    verify(adjust_regulator).
+    %Not added a ! at the end of each because there might be other instructions in headset's branches.
+    %Right use of this sentence implies selecting ";" after each instruction in CLI.
+
+%Error in duplicate status values check
+status_error(check):-
+    status(X,Y), status(X,Z), dif(Y,Z), writeln(X), writeln('has 2 status values. It should have exactly one for the KB to work properly'),!.
 
 
-%assert y retract de una oración la agrega o quita respectivamente de la Base del conocimiento.
 
-%Encadenamiento hacia adelante? I can ask if I have anything to do or for an specific task true value?
-%How would this KB be used? I don't get the example
-%To have proven an specific point in the workflow doesn't guarantee you have to accomplish the consequent task.
-%Chain of yes and no variable values for every leaf.
-
-
-
-%verify(E):-status(D,unknown),writeln("Check D status"),!; 
-%           status(D,yes),verify(D),writeln("Accion E").
-
-
-
-%KNOWLEDGE BASE
-%Axioms
-%Oración lógica (consecuente :- antecedente)
-%predicados: verificar(predicado unario), estado(binario), writeln...Un predicado es una relación. Hay predicados n-arios
-
-%verify(x): True if all the question nodes before X have the right answer to reach X
-%status(x,r): True if the question x's answer is r
-
-%EComment: All leaves should go first. 
-%EComment: Every leaf name changed to a descriptive one
-%EComment: Status unknown instruction changed to a user readable format
-
-%Instruction nodes
+%Instruction nodes (%All leaves go first.) 
 %   Middle Left
 verify(set_safety_valve):-
     status(pilot, unknown), writeln('Please, check if pilot works properly'), !;
@@ -61,6 +57,7 @@ verify(safety_valve_to_open):-
 verify(safety_appropriate):-
     status(relief_valve_work_correctly_with_10_increase, unknown), writeln('Please, check if the relief valve works correctly with a 10% increase of regulating pressure'), !;
     status(relief_valve_work_correctly_with_10_increase, yes), verify(relief_valve_work_correctly_with_10_increase), writeln('Safety function is appropiate').
+
 %   Middle Right
 verify(replace_safety_spring):-
     status(safety_spring_effective, unknown), writeln('Please, check if safety spring is efective'), !;
@@ -77,13 +74,12 @@ verify(adjust_regulator):-
 
 
 %Question nodes
-%EComment: Corrected status asking for its own node status value as unknown to asking previous node value as unknown
-%Added a false clause in first sentence so it stops there
 %   Middle Left
 verify(pilot):-
     status(proper_leakage_prevention_between_sit_and_orifice, unknown), writeln('Please, check if there is proper leakage prevention between sit and orifice'), false, !;
     status(proper_leakage_prevention_between_sit_and_orifice, yes), verify(proper_leakage_prevention_between_sit_and_orifice).
-
+%EComment: Corrected status asking for its own node status value as unknown to asking previous node value as unknown
+%EComment: Added a false clause in first sentence so it stops there
 verify(proper_leakage_prevention_between_sit_and_orifice):-
     status(performance_and_efficiency_of_safety_valve_spring, unknown), writeln('Please, check the performance and efficiency of safety valve spring'), false, !;
     status(performance_and_efficiency_of_safety_valve_spring, yes), verify(performance_and_efficiency_of_safety_valve_spring).
@@ -102,7 +98,8 @@ verify(valve_status_in_close_position):-
     
 verify(relief_valve_work_correctly_with_10_increase):-
     status(safety_valve_continuous_gas_evacuation, unknown), writeln('Please, check if safety valve has a continuous gas evacuation'), false, !;
-    status(safety_valve_continuous_gas_evacuation, no).%verify(safety_valve_continuous_gas_evacuation). This has no previous node so its always true
+    status(safety_valve_continuous_gas_evacuation, no).%EComment:verify(safety_valve_continuous_gas_evacuation). This has no previous node so its always true
+
 %   Middle Right
 verify(proper_leakage_prevention_between_sit_and_orifice_2):-
     status(safety_spring_effective, unknown), writeln('Please, check if safety spring is effective'), false, !;
@@ -120,33 +117,73 @@ verify(line_gas_pressure_appropriate):-
     status(safety_valve_continuous_gas_evacuation, unknown), writeln('Please, check if safety valve has a continuous gas evacuation'), false, !;
     status(safety_valve_continuous_gas_evacuation, yes).
 
-%Ecomment:
-/* Erased, because it makes no sense to check this.
-verify(safety_valve_continuous_gas_evacuation):-
-    status(safety_valve_continuous_gas_evacuation, unknown),writeln('Verify '), !;
-    status(safety_valve_continuous_gas_evacuation, no).
-*/
+
+%Ecomment:Erased, because it makes no sense to check this. It's assumed true as its the starting condition
+    /* 
+    verify(safety_valve_continuous_gas_evacuation):-
+        status(safety_valve_continuous_gas_evacuation, unknown),writeln('Verify '), !;
+        status(safety_valve_continuous_gas_evacuation, no).
+    */
+
 
 %GROUND FACTS
+%   Middle Left
 status(pilot, yes).
 status(proper_leakage_prevention_between_sit_and_orifice, yes).
 status(performance_and_efficiency_of_safety_valve_spring, yes).
-status(control_valve_sensors_blocked, no).
+status(control_valve_sensors_blocked, yes).
 status(valve_status_in_close_position, no).
 status(relief_valve_work_correctly_with_10_increase, no).
 status(safety_valve_continuous_gas_evacuation, no).
+%   Middle Right
+status(proper_leakage_prevention_between_sit_and_orifice_2,X):- status(proper_leakage_prevention_between_sit_and_orifice, X).
+%previous sentence could be replaced by the second in Axioms, but as we do need a second constant in verify, we also use it in status for the sake of reducing code complexity.
+status(safety_spring_effective,unknown).
+status(control_pressure_sensor_pipes_blocked,yes).
+status(line_gas_pressure_appropriate,yes).
+
+
+
+%Notes:
+    %safety spring efective used twice? As written differently in the flow chart we chose to create 2 constants
+
+
+
+%Pending tasks
+    %Add Klara branches
+    %Probar que TODAS las combinaciones de ground facts den la instrucción correcta.
+    %When read, delete all EComments
+
+
+
+%SOLUTION LOGIC
+    %verify(x): True if all the question nodes before X have the right answer to reach X
+    %status(x,r): True if the question x's answer is r
+
+
+%General structure for a "verify" sentence
+    %Supposing E is a question and D is it's previous node. Yes is the answer to the previous node to get into E
+        %verify(E):-status(D,unknown),writeln("Check D status"), false, !; 
+        %           status(D,yes),verify(D).
+
+    %Supposing A is a question at the top and B is second layer
+        %verify(B):-status(A,unknown),writeln("Check A status"),!; 
+        %           status(A,yes).
+
+    %A won't have a verify sentence. Only a status one
+
+    %Supposing E is a leaf
+        %verify(E):-status(D,unknown),writeln("Check D status"),!; 
+        %           status(D,yes),verify(D),writeln("Accion E").
 
 
 
 
-%verify(E):-status(D,unknown),writeln("Check D status"),!;
-%           status(D,yes),verify(D),writeln("Accion E").
-%verify(valve_status_closed) :-
-%                status(valve_status_closed, undefined), writeln('Check valve status')),!;
-%                status(relief_valve_ok_with_10_percent_more_pressure, no),verify(relief_valve_ok_with_10_percent_more_pressure).
-%Add instruction to make status(proper_leakage_prevention_between_sit_and_orifice_2,yes/no) equal to the 1 case
-%Manejo de error de tener una constante con dos valores de status?
-%Verificacion de errores probando que TODAS las combinaciones de ground facts den lo correcto
-%safety sprong efectivee used twice?
-%Add general maintenance sentence
-%When read, delete all EComments
+
+%Possible improvement if we wanted to implement this in real life: 
+    /*
+    General Maintenance asks you to define all nodes when it's not really necessary.
+    To solve it we should develope a chain for general maintenance that starts in the origin node and expands
+    the subsequents. We have made sentences that start from leaves and check if you have all the info to define if
+    that instruction should be done, but from the end to the start which is not efficient.
+    */
