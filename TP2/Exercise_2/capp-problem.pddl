@@ -1,62 +1,119 @@
 (define (problem capp-pieza)
-    (:domain capp)
+    (:domain capp_tp2)
     (:objects 
-        orientacion_pos_x
-        orientacion_pos_y
-        orientacion_pos_z
-        orientacion_neg_x
-        orientacion_neg_y
-        orientacion_neg_z
+        orientation-xp
+        orientation-yp
+        orientation-zp
+        orientation-xn
+        orientation-yn
+        orientation-zn
         s2
         s4
         s6
         s9
         s10
+        h1
+        h3
+        h5
+        h7
+        h9
+        h11
+        h12
         slot
         through-hole
         blind-hole
-        fresado
-        taladrado
-        torneado
+        milling
+        drilled
+        polished
     )
     (:init 
-        (orientacion orientacion_pos_x)
-        (orientacion orientacion_pos_y)
-        (orientacion orientacion_pos_z)
-        (orientacion orientacion_neg_x)
-        (orientacion orientacion_neg_y)
-        (orientacion orientacion_neg_z)
+    ;Orientation
+        (orientation orientation-xp)
+        (orientation orientation-yp)
+        (orientation orientation-zp)
+        (orientation orientation-xn)
+        (orientation orientation-yn)
+        (orientation orientation-zn)
+    ;Features
         (feature s2)
         (feature s4)
         (feature s6)
         (feature s9)
         (feature s10)
-        (tipo slot)
-        (tipo through-hole)
-        (tipo blind-hole)
-        (operacion fresado)
-        (operacion taladrado)
-        (operacion torneado)
-        (feature-tipo s2 slot)
-        (feature-tipo s4 slot)
-        (feature-tipo s6 slot)
-        (feature-tipo s9 slot)
-        (feature-tipo s10 slot)
-        (orientacion-pieza orientacion_neg_x)
-        (orientacion-feature s2 orientacion_pos_x)
-        (orientacion-feature s4 orientacion_neg_x)
-        (orientacion-feature s6 orientacion_pos_x)
-        (orientacion-feature s9 orientacion_pos_z)
-        (orientacion-feature s10 orientacion_pos_z)
-        (fabricable slot fresado)
+        (feature h1)
+        (feature h3)
+        (feature h5)
+        (feature h7)
+        (feature h9)
+        (feature h11)
+        (feature h12)
+    ;Type
+        (type slot)
+        (type through-hole)
+        (type blind-hole)
+    ;Operations
+        (operation milling)
+        (operation drilled)
+        (operation polished)
+    ;Features Types
+        ;slot
+        (feature-type s2 slot)
+        (feature-type s4 slot)
+        (feature-type s6 slot)
+        (feature-type s9 slot)
+        (feature-type s10 slot)
+        
+        ;through-hole
+        (feature-type h1 through-hole)
+        (feature-type h3 through-hole)
+        (feature-type h5 through-hole)
+        (feature-type h7 through-hole)
+        ;blind-hole
+        (feature-type h9 blind-hole)
+        (feature-type h11 blind-hole)
+        (feature-type h12 blind-hole)
+    ;Piece Orientation
+        (piece-orientation orientation-xn)
+    ;Features Orientation
+        ;slot
+        (orientation-feature s2 orientation-xp)
+        (orientation-feature s4 orientation-xn)
+        (orientation-feature s6 orientation-xp)
+        (orientation-feature s9 orientation-zp)
+        (orientation-feature s10 orientation-zp)
+        ;through-hole
+        (orientation-feature h1 orientation-xp)
+        (orientation-feature h3 orientation-xn)
+        (orientation-feature h5 orientation-xp)
+        (orientation-feature h7 orientation-zp)
+        ;blind-hole
+        (orientation-feature h9 orientation-xp)
+        (orientation-feature h11 orientation-xn)
+        (orientation-feature h12 orientation-xp)
+    ;Craftable
+        (craftable slot milling)
+        (craftable slot polished)
+        (craftable blind-hole drilled)
+        (craftable through-hole drilled)
     )
     (:goal 
         (and
-            (fabricada s2)
-            (fabricada s4)
-            (fabricada s6)
-            (fabricada s9)
-            (fabricada s10)
+        ;Slot goals
+            (crafted s2)
+            (crafted s4)
+            (crafted s6)
+            (crafted s9)
+            (crafted s10)
+        ;Through-hole goals
+            (crafted h1)
+            (crafted h3)
+            (crafted h5)
+            (crafted h7)
+        ;Blind-hole goals
+            (crafted h9)
+            (crafted h11)
+            (crafted h12)
+        
         )
     )
 )
