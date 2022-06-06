@@ -1,12 +1,14 @@
 (define (problem capp-pieza)
     (:domain capp_tp2)
     (:objects 
+    ;Orientation
         orientation-xp
         orientation-yp
         orientation-zp
         orientation-xn
         orientation-yn
         orientation-zn
+    ;Features
         s2
         s4
         s6
@@ -19,9 +21,11 @@
         h9
         h11
         h12
+    ;Type
         slot
         through-hole
         blind-hole
+    ;Operation
         milling
         drilled
         polished
@@ -73,8 +77,8 @@
         (feature-type h11 blind-hole)
         (feature-type h12 blind-hole)
     ;Piece Orientation
-        (piece-orientation orientation-xn)
-    ;Features Orientation
+        (piece-orientation orientation-xn)  ;initial orientation
+    ;Features Orientation (defines the orientation in which the operation should be performed)
         ;slot
         (orientation-feature s2 orientation-xp)
         (orientation-feature s4 orientation-xn)
@@ -90,7 +94,7 @@
         (orientation-feature h9 orientation-xp)
         (orientation-feature h11 orientation-xn)
         (orientation-feature h12 orientation-xp)
-    ;Craftable
+    ;Craftable (defines how the features types are crafted)
         (craftable slot milling)
         (craftable slot polished)
         (craftable blind-hole drilled)

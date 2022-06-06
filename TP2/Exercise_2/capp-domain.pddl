@@ -4,29 +4,29 @@
 ; EQUALITY = Allows the usage of = to compare objects. 
 ;   For example if we have two objects as arguments ?s1 and ?s2 we can compare them to see if they’re the same.
 (:predicates
-    (orientation ?o) ;predicado de type
-	(feature ?f) ;predicado de type (S1, S2, S3, etc)
-    (type ?t) ;predicado de type (Slot, Through-Hole, Blind-Hole)
-    (operation ?op) ;predicado de type (Fresado, Torneado, Taladrado)
-    (feature-type ?f ?feat-type) ; Relaciona una feature F con un type 
-    (piece-orientation ?oa) ;Define la orientación d ela pieza
-    (orientation-feature ?f ?oa) ;Define la orientación de cada feature
-    (craftable ?feat-type ?operation) ;Relacion entre type de feature y operationes de fabricación que se pueden usar para esas features
-    (crafted ?feat) ;Indica cuando una feature ha sido crafted
+    (orientation ?o) ;type predicate
+	(feature ?f) ;type predicate (S1, S2, S3, etc)
+    (type ?t) ;type predicate  (Slot, Through-Hole, Blind-Hole)
+    (operation ?op) ;type predicate  (Fresado, Torneado, Taladrado)
+    (feature-type ?f ?feat-type) ; Relates an F featurewith a type 
+    (piece-orientation ?oa) ;Defines piece orientation
+    (orientation-feature ?f ?oa) ;Defines the feature orientation
+    (craftable ?feat-type ?operation) ;Relation between "feature type" and the manufacturing operations that can be used with those features
+    (crafted ?feat) ;Indicates a crafted feature
     
 ) 
 
-(:action setup-orientation
+(:action setup-orientation ;With this we change the piece orientation
  :parameters ( ?orientation-inicial ?orientation-final )
  :precondition
 	(and 
-        (piece-orientation ?orientation-inicial) 
+        (piece-orientation ?orientation-inicial) ;Precondition
         (orientation ?orientation-inicial) 
         (orientation ?orientation-final)
     )
  :effect
 	(and 
-		(piece-orientation ?orientation-final)
+		(piece-orientation ?orientation-final) ;Effect
 		(not (piece-orientation ?orientation-inicial))
 	)
 )
