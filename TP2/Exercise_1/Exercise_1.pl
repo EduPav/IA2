@@ -106,44 +106,54 @@ verify(safety_valve_no_gas_leakage):-
 %   Middle Left
 verify(pilot):-
     status(proper_leakage_prevention_between_sit_and_orifice, unknown), writeln('Please, check if there is proper leakage prevention between sit and orifice'), false, !;
+    status(proper_leakage_prevention_between_sit_and_orifice, no), writeln('There is no proper leakage prevention between Sit and Orifice'), false, !; %%%%
     status(proper_leakage_prevention_between_sit_and_orifice, yes), verify(proper_leakage_prevention_between_sit_and_orifice).
 %EComment: Corrected status asking for its own node status value as unknown to asking previous node value as unknown
 %EComment: Added a false clause in first sentence so it stops there
 verify(proper_leakage_prevention_between_sit_and_orifice):-
     status(performance_and_efficiency_of_safety_valve_spring, unknown), writeln('Please, check the performance and efficiency of safety valve spring'), false, !;
+    status(performance_and_efficiency_of_safety_valve_spring, no), writeln('Performance and efficiency of the safety valve is not good'), false, !; %%%%
     status(performance_and_efficiency_of_safety_valve_spring, yes), verify(performance_and_efficiency_of_safety_valve_spring).
 
 verify(performance_and_efficiency_of_safety_valve_spring):-
     status(control_valve_sensors_blocked, unknown), writeln('Please, check if the control valve sensors are blocked'), false, !;
+    status(control_valve_sensors_blocked, yes), writeln('The control valve sensors are blocked'), false, !; %%%%
     status(control_valve_sensors_blocked, no), verify(control_valve_sensors_blocked).
 
 verify(control_valve_sensors_blocked):-
     status(valve_status_in_close_position, unknown), writeln('Please, check if the valve status is in close position'), false, !;
+    status(valve_status_in_close_position, yes), writeln('The valve status is in CLOSE position'), false, !; %%%%
     status(valve_status_in_close_position, no), verify(valve_status_in_close_position).
 
 verify(valve_status_in_close_position):-
     status(relief_valve_work_correctly_with_10_increase, unknown), writeln('Please, check if the relief valve works correctly with a 10% increase of regulating pressure'), false, !;
+    status(relief_valve_work_correctly_with_10_increase, yes), writeln('The relief valve works correctly'), false, !; %%%%
     status(relief_valve_work_correctly_with_10_increase, no), verify(relief_valve_work_correctly_with_10_increase).
     
 verify(relief_valve_work_correctly_with_10_increase):-
     status(safety_valve_continuous_gas_evacuation, unknown), writeln('Please, check if safety valve has a continuous gas evacuation'), false, !;
+    status(safety_valve_continuous_gas_evacuation, unknown), writeln('The safety valve has continuous gas evacuation'), false, !; %%%%
     status(safety_valve_continuous_gas_evacuation, no).%EComment:verify(safety_valve_continuous_gas_evacuation). This has no previous node so its always true
 
 %   Middle Right
 verify(proper_leakage_prevention_between_sit_and_orifice_2):-
     status(safety_spring_effective, unknown), writeln('Please, check if safety spring is effective'), false, !;
+    status(safety_spring_effective, no), writeln('The safety stpring is not effective'), false, !; %%%%
     status(safety_spring_effective, yes), verify(safety_spring_effective).
 
 verify(safety_spring_effective):-
     status(control_pressure_sensor_pipes_blocked, unknown), writeln('Please, check if control and pressure sensor pipes are blocked'), false, !;
+    status(control_pressure_sensor_pipes_blocked, yes), writeln('Control pressure sensor pipes are blocked'), false, !; %%%%
     status(control_pressure_sensor_pipes_blocked, no), verify(control_pressure_sensor_pipes_blocked).
 
 verify(control_pressure_sensor_pipes_blocked):-
     status(line_gas_pressure_appropriate, unknown), writeln('Please, check if line gas pressure is appropriate'), false, !;
+    status(line_gas_pressure_appropriate, no), writeln('Line gas pressure is not appropiate'), false, !; %%%%
     status(line_gas_pressure_appropriate, yes), verify(line_gas_pressure_appropriate).
 
 verify(line_gas_pressure_appropriate):-
     status(safety_valve_continuous_gas_evacuation, unknown), writeln('Please, check if safety valve has a continuous gas evacuation'), false, !;
+    status(safety_valve_continuous_gas_evacuation, no), writeln('Savety valve has not a continuous gas evacuation'), false, !; %%%%
     status(safety_valve_continuous_gas_evacuation, yes).
 
 
@@ -157,27 +167,29 @@ verify(line_gas_pressure_appropriate):-
 %   Left
 verify(thickness_under_threshold_limit):-
     status(safety_valve_body_pipes_joints_dazzling_rusting, unknown), writeln('Please check if the safety valve body, pipes and joints have the effects of dazzling and rusting.'), false, !;
+    status(safety_valve_body_pipes_joints_dazzling_rusting, yes), writeln('Safety valve body, pipes and joints have the effects of dazzling and rusting.'), false, !; %%%%
     status(safety_valve_body_pipes_joints_dazzling_rusting, no).
 
 %   Right
 verify(leakage_fixed_with_wrench):-
     status(gas_leakage_joint, unknown), writeln('Please checkif there is a gas leakage at joint'), false, !;
+    status(gas_leakage_joint, no), writeln('There is no gas leakage at joint'), false, !; %%%%
     status(gas_leakage_joint, yes). 
 
 
 %GROUND FACTS
 %   Middle Left
 status(pilot, yes).
-status(proper_leakage_prevention_between_sit_and_orifice, yes).
-status(performance_and_efficiency_of_safety_valve_spring, yes).
-status(control_valve_sensors_blocked, yes).
+status(proper_leakage_prevention_between_sit_and_orifice, no).
+status(performance_and_efficiency_of_safety_valve_spring, no).
+status(control_valve_sensors_blocked, no).
 status(valve_status_in_close_position, no).
 status(relief_valve_work_correctly_with_10_increase, no).
 status(safety_valve_continuous_gas_evacuation, no).
 %   Middle Right
 status(proper_leakage_prevention_between_sit_and_orifice_2,X):- status(proper_leakage_prevention_between_sit_and_orifice, X).
 %previous sentence could be replaced by the second in Axioms, but as we do need a second constant in verify, we also use it in status for the sake of reducing code complexity.
-status(safety_spring_effective,unknown).
+status(safety_spring_effective,no).
 status(control_pressure_sensor_pipes_blocked,yes).
 status(line_gas_pressure_appropriate,yes).
 
