@@ -7,6 +7,8 @@ CONSTANT_m = 1  # Pendulum mass
 CONSTANT_l = 1  # Pendulum length
 
 theta_set_width = 2/3*np.pi #rad (120º)
+#velocity_set_width=  (rad/s) 
+#Force_set_width=     (N?)
 
 #Fuzzy sets (We will use Spanish acronyms)
 NG=-2
@@ -71,20 +73,40 @@ def maptheta(theta):
         theta = theta+2*np.pi
     return theta
 
-def mu_T(theta, FS):
-  #For NP and PP sum or rest 60º*pi/180 from theta
-  #For NG,PG build a shoulder function
-  if FS==Z:
-    if theta>theta_set_width/2 or theta<-theta_set_width/2:
-      return 0
-    elif theta>0:
-      return 1-theta/(theta_set_width/2)
-    elif theta<0:
-      return 1+theta/(theta_set_width/2)
-    else:
-      print("Unexpected theta value")
+#For theta use theta_set_width
 #For velocity and Force use different ***_set_width and input variable name
-
+def mu(value, FS, half_set_width): #Considering 5 fuzzy sets.
+  #half_set_width--> variable set width/2
+  #value--> variable's value
+  if FS == NP:
+    value+=half_set_width*np.pi/(180)
+  elif FS == PP:
+    value-=half_set_width*np.pi/(180)
+  
+  if FS==Z or FS==NP or FS==PP:
+    if value>half_set_width or value<-half_set_width:
+      return 0
+    elif value>0:
+      return 1-value/(half_set_width)
+    elif value<0:
+      return 1+value/(half_set_width)
+    else:
+      print("Unexpected variable value")
+  #For NG,PG build a shoulder function
+  elif FS==PG:
+    if value>2*half_set_width:
+      return 1
+    elif value<half_set_width:
+      return 0
+    else:
+      return (value-half_set_width)/(half_set_width)
+  elif FS==NG: #Following is copilot's code untouched
+    if value<-2*half_set_width:
+      return 1
+    elif value>-half_set_width:
+      return 0
+    else:
+      return (value+half_set_width)/(half_set_width)
 
 
 simulate(10, 0.0001, 45, 0)  # Removed acceleration from function inputs
