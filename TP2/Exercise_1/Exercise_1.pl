@@ -139,7 +139,7 @@ verify(relief_valve_work_correctly_with_10_increase):-
 %   Middle Right
 verify(proper_leakage_prevention_between_sit_and_orifice_2):-
     status(safety_spring_effective, unknown), writeln('Please, check if safety spring is effective'), false, !;
-    status(safety_spring_effective, no), writeln('The safety stpring is not effective'), false, !; %%%%
+    status(safety_spring_effective, no), writeln('The safety spring is not effective'), false, !; %%%%
     status(safety_spring_effective, yes), verify(safety_spring_effective).
 
 verify(safety_spring_effective):-
@@ -173,19 +173,19 @@ verify(leakage_fixed_with_wrench):-
 
 %GROUND FACTS: Only answers to questions, NOT to leaves.
 %   Middle Left
-status(pilot, yes).
+status(pilot, no).
 status(proper_leakage_prevention_between_sit_and_orifice, no).
-status(performance_and_efficiency_of_safety_valve_spring, no).
+status(performance_and_efficiency_of_safety_valve_spring, yes).
 status(control_valve_sensors_blocked, no).
 status(valve_status_in_close_position, no).
 status(relief_valve_work_correctly_with_10_increase, no).
-status(safety_valve_continuous_gas_evacuation, no).
+status(safety_valve_continuous_gas_evacuation, yes).
 
 %   Middle Right
 status(proper_leakage_prevention_between_sit_and_orifice_2,X):- status(proper_leakage_prevention_between_sit_and_orifice, X).
 %previous sentence could be replaced by the second in Axioms, but as we do need a second constant in verify, we also use it in status for the sake of reducing code complexity.
-status(safety_spring_effective,no).
-status(control_pressure_sensor_pipes_blocked,yes).
+status(safety_spring_effective,yes).
+status(control_pressure_sensor_pipes_blocked,no).
 status(line_gas_pressure_appropriate,yes).
 
 %   Right
