@@ -1,4 +1,3 @@
-;Check how to add costs?
 (define (problem carga-aerea)
     (:domain aviones)
     (:objects 
@@ -19,6 +18,7 @@
         TELA-GRANIZO
         COSECHADORA
         AUTOPARTES
+        MATERIALES-DE-CONSTRUCCION
     )
     (:init 
         (avion LA01)
@@ -38,6 +38,7 @@
         (carga TELA-GRANIZO)
         (carga COSECHADORA)
         (carga AUTOPARTES)
+        (carga MATERIALES-DE-CONSTRUCCION)
         (en LA01 MDZ)
         (en LA02 AEP)
         (en LA03 COR)
@@ -51,6 +52,7 @@
         (en TELA-GRANIZO SFN)
         (en COSECHADORA MDZ)
         (en AUTOPARTES COR)
+        (en MATERIALES-DE-CONSTRUCCION SFN)
     )
     (:goal 
         (and
@@ -58,6 +60,7 @@
             (en TELA-GRANIZO MDZ)
             (en COSECHADORA COR)
             (en AUTOPARTES AEP)
+            (en MATERIALES-DE-CONSTRUCCION COR)
         )
     )
 )

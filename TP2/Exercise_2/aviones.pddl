@@ -3,6 +3,7 @@
 (:predicates
 	(en ?a ?b) 
 	(avion ?a)
+	(tanque_lleno ?a)
 	(carga ?c)
 	(aeropuerto ?a)
 ) 
@@ -29,11 +30,20 @@
 (:action volar
  :parameters ( ?a ?origen ?destino)
  :precondition
-	(and (en ?a ?origen) (avion ?a) (aeropuerto ?origen) (aeropuerto ?destino))
+	(and (en ?a ?origen) (avion ?a) (tanque_lleno ?a) (aeropuerto ?origen) (aeropuerto ?destino))
  :effect
 	(and 
 		(en ?a ?destino) 
 		(not (en ?a ?origen))
+		(not (tanque_lleno ?a))
+	)
+)
+(:action cargar-combustible
+ :parameters (?a)
+ :precondition
+	 (avion ?a)
+ :effect 
+	(tanque_lleno ?a 
 	)
 )
 )
