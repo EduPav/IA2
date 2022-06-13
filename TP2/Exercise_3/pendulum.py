@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import constants
 
+#tasks
+#Klara: Divide F calculated in center average function
+
 CONSTANT_M = 2  # Car mass
 CONSTANT_m = 1  # Pendulum mass
 CONSTANT_l = 1  # Pendulum length
@@ -25,8 +28,7 @@ PG = 2
 #   t_max: maximum time (starts in 0)
 #   delta_t: time increment in each iteration
 #   theta_0: initial angle (degrees)
-#   v_0: initial angular velocity (radians/s)
-#   a_0: initial angular acceleration (radians/s2)
+#   w_0: initial angular velocity (radians/s)
 
 
 def simulate(t_max, delta_t, theta_0, w_0):  # a_0 REMOVED from function inputs
@@ -50,7 +52,7 @@ def simulate(t_max, delta_t, theta_0, w_0):  # a_0 REMOVED from function inputs
         else:
             w += a * delta_t
 
-        a = calculate_acceleration(theta, w, control_Force(theta, w)) #Ojo, hay un tema de signos. Con F de 200 y angulo positivo te manda la simulacion al otro lado y no debería.
+        a = calculate_acceleration(theta, w, control_Force(theta, w)) #Check F sign in formula. If you use positive force and angle it works and it shouldn't
         y.append(theta)
     x = np.append(x, t_max)  # ADDED
 
@@ -157,7 +159,7 @@ def control_Force(theta, w):
     )
 
     F = -Force_set_width*(F_PG+F_PP/2-F_NP/2-F_NG)
-    #print(F_PG,F_NG,F_PP,F_NP)
+
     return F
 
 def mu_printer(var0,varf,dx,variable_width):
@@ -181,6 +183,6 @@ def mu_printer(var0,varf,dx,variable_width):
     plt.legend()
     plt.show()
 
-#mu_printer(-1.5*Force_set_width,1.5*Force_set_width,0.001,Force_set_width)
-#mu_printer(-theta_limit,theta_limit,0.001,theta_set_width)
+mu_printer(-1.5*Force_set_width,1.5*Force_set_width,0.001,Force_set_width)
+mu_printer(-theta_limit,theta_limit,0.001,theta_set_width)
 simulate(10, 0.0001, 80, 0)  # Removed acceleration from function inputs
