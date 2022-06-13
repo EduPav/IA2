@@ -7,8 +7,8 @@ CONSTANT_m = 1  # Pendulum mass
 CONSTANT_l = 1  # Pendulum length
 
 theta_set_width = 1/3*np.pi  # rad (60º)
-w_set_width = 1  # Correct value(rad/s)
-Force_set_width = 200  # (N?)(-10 a 10 segun paper?-50 a 50 o 100 suena mejor)
+w_set_width = 1  # (rad/s)
+Force_set_width = 200  # (N)
 # +-80º If reaches this point, velocity is made zero.
 theta_limit = np.pi/2-10/180*np.pi
 
@@ -50,7 +50,7 @@ def simulate(t_max, delta_t, theta_0, w_0):  # a_0 REMOVED from function inputs
         else:
             w += a * delta_t
 
-        a = calculate_acceleration(theta, w, control_Force(theta, w))
+        a = calculate_acceleration(theta, w, control_Force(theta, w)) #Ojo, hay un tema de signos. Con F de 200 y angulo positivo te manda la simulacion al otro lado y no debería.
         y.append(theta)
     x = np.append(x, t_max)  # ADDED
 
@@ -82,13 +82,14 @@ def maptheta(theta):
     return theta
 
 
-def mu(value, FS, half_set_width):  # Considering 5 fuzzy sets.
+def mu(value, FS, variable_set_width):  # Considering 5 fuzzy sets.
     # half_set_width--> variable set width/2
     # value--> variable's value
+    half_set_width=variable_set_width/2
     if FS == NP:
-        value += half_set_width*np.pi/(180)
+        value += half_set_width
     elif FS == PP:
-        value -= half_set_width*np.pi/(180)
+        value -= half_set_width
 
     if FS == Z or FS == NP or FS == PP:
         if value > half_set_width or value < -half_set_width:
@@ -101,19 +102,19 @@ def mu(value, FS, half_set_width):  # Considering 5 fuzzy sets.
             print("Unexpected variable value")
     # For NG,PG build a shoulder function
     elif FS == PG:
-        if value > 2*half_set_width:
+        if value > variable_set_width:
             return 1
         elif value < half_set_width:
             return 0
         else:
             return (value-half_set_width)/(half_set_width)
     elif FS == NG:  # Following is copilot's code untouched
-        if value < -2*half_set_width:
+        if value < -variable_set_width:
             return 1
         elif value > -half_set_width:
             return 0
         else:
-            return (value+half_set_width)/(half_set_width)
+            return -(value+half_set_width)/(half_set_width)
 
 
 def control_Force(theta, w):
@@ -155,9 +156,31 @@ def control_Force(theta, w):
         min(mu(theta, PG, theta_set_width), mu(w, Z, w_set_width)),
     )
 
-    F = Force_set_width*(F_PG+F_PP/2-F_NP/2-F_NG)
-    print(F_PG,F_NG,F_PP,F_NP)
+    F = -Force_set_width*(F_PG+F_PP/2-F_NP/2-F_NG)
+    #print(F_PG,F_NG,F_PP,F_NP)
     return F
 
+def mu_printer(var0,varf,dx,variable_width):
+    var=np.arange(var0,varf,dx)
+    NG_list=[]
+    NP_list=[]
+    PP_list=[]
+    PG_list=[]
+    Z_list=[]
+    for i in var:
+        NG_list.append(mu(i, NG, variable_width))
+        NP_list.append(mu(i, NP, variable_width))
+        PP_list.append(mu(i, PP, variable_width))
+        PG_list.append(mu(i, PG, variable_width))
+        Z_list.append(mu(i, Z, variable_width))
+    plt.plot(var,NG_list,label='NG')
+    plt.plot(var,NP_list,label='NP')
+    plt.plot(var,PP_list,label='PP')
+    plt.plot(var,PG_list,label='PG')
+    plt.plot(var,Z_list,label='Z')
+    plt.legend()
+    plt.show()
 
-simulate(10, 0.0001, 45, 0)  # Removed acceleration from function inputs
+#mu_printer(-1.5*Force_set_width,1.5*Force_set_width,0.001,Force_set_width)
+#mu_printer(-theta_limit,theta_limit,0.001,theta_set_width)
+simulate(10, 0.0001, 80, 0)  # Removed acceleration from function inputs
