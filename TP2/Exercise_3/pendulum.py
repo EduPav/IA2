@@ -135,13 +135,13 @@ def control_Force(theta, w):
         min(mu(theta, PP, theta_set_width), mu(w, NG, w_set_width)),
     )
     # Commented because its center is zero, then it doesn't add weight to the calculation
-    # F_Z=max(
-    #  min(mu(theta,NG,theta_set_width),mu(w,PG,w_set_width)),
-    #  min(mu(theta,NP,theta_set_width),mu(w,PP,w_set_width)),
-    #  min(mu(theta,Z ,theta_set_width),mu(w,Z ,w_set_width)),
-    #  min(mu(theta,PP,theta_set_width),mu(w,NP,w_set_width)),
-    #  min(mu(theta,PG,theta_set_width),mu(w,NG,w_set_width)),
-    # )
+    F_Z=max(
+     min(mu(theta,NG,theta_set_width),mu(w,PG,w_set_width)),
+     min(mu(theta,NP,theta_set_width),mu(w,PP,w_set_width)),
+     min(mu(theta,Z ,theta_set_width),mu(w,Z ,w_set_width)),
+     min(mu(theta,PP,theta_set_width),mu(w,NP,w_set_width)),
+     min(mu(theta,PG,theta_set_width),mu(w,NG,w_set_width)),
+    )
     F_NP = max(
         min(mu(theta, NP, theta_set_width), mu(w, PG, w_set_width)),
         min(mu(theta, Z, theta_set_width), mu(w, PP, w_set_width)),
@@ -158,7 +158,7 @@ def control_Force(theta, w):
         min(mu(theta, PG, theta_set_width), mu(w, Z, w_set_width)),
     )
 
-    F = -Force_set_width*(F_PG+F_PP/2-F_NP/2-F_NG)
+    F = -Force_set_width*(F_PG+F_PP/2-F_NP/2-F_NG)/(F_PG + F_PP + F_Z + F_NP + F_NG)
 
     return F
 
