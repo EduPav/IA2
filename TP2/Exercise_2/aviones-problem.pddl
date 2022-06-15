@@ -10,10 +10,12 @@
         FB01
         FB02
         FB03
+        FB04
         MDZ
         AEP
         COR
         SFN
+        CDG
         FERTILIZANTE
         TELA-GRANIZO
         COSECHADORA
@@ -30,10 +32,12 @@
         (avion FB01)
         (avion FB02)
         (avion FB03)
+        (avion FB04)
         (aeropuerto MDZ)
         (aeropuerto AEP)
         (aeropuerto COR)
         (aeropuerto SFN)
+        (aeropuerto CDG)
         (carga FERTILIZANTE)
         (carga TELA-GRANIZO)
         (carga COSECHADORA)
@@ -48,11 +52,13 @@
         (en FB01 COR)
         (en FB02 AEP)
         (en FB03 SFN)
+        (en FB04 CDG)
         (en FERTILIZANTE AEP)
         (en TELA-GRANIZO SFN)
         (en COSECHADORA MDZ)
         (en AUTOPARTES COR)
         (en MATERIALES-DE-CONSTRUCCION SFN)
+        (en COSECHADORA CDG)
     )
     (:goal 
         (and
@@ -61,6 +67,7 @@
             (en COSECHADORA COR)
             (en AUTOPARTES AEP)
             (en MATERIALES-DE-CONSTRUCCION COR)
+            (en COSECHADORA AEP)
         )
     )
 )

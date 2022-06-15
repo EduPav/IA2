@@ -6,6 +6,7 @@
 	(tanque_lleno ?a)
 	(carga ?c)
 	(aeropuerto ?a)
+	(mantenimiento_ok ?a)
 ) 
 (:action cargar
  :parameters ( ?c ?a ?ap)
@@ -30,12 +31,13 @@
 (:action volar
  :parameters ( ?a ?origen ?destino)
  :precondition
-	(and (en ?a ?origen) (avion ?a) (tanque_lleno ?a) (aeropuerto ?origen) (aeropuerto ?destino))
+	(and (en ?a ?origen) (avion ?a) (tanque_lleno ?a) (aeropuerto ?origen) (aeropuerto ?destino) (mantenimiento_ok ?a))
  :effect
 	(and 
 		(en ?a ?destino) 
 		(not (en ?a ?origen))
 		(not (tanque_lleno ?a))
+		(not (mantenimiento_ok ?a))
 	)
 )
 (:action cargar-combustible
@@ -45,5 +47,12 @@
  :effect 
 	(tanque_lleno ?a 
 	)
+)
+(:action revisar
+ :parameters (?a)
+ :precondition
+	(avion ?a)
+ :effect 
+	(mantenimiento_ok ?a)
 )
 )
