@@ -2,9 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import constants
 
-#tasks
-#Klara: Divide F calculated in center average function
-
 CONSTANT_M = 2  # Car mass
 CONSTANT_m = 1  # Pendulum mass
 CONSTANT_l = 1  # Pendulum length
@@ -34,7 +31,7 @@ PG = 2
 def simulate(t_max, delta_t, theta_0, w_0):  # a_0 REMOVED from function inputs
 
     # Step 0: Initial conditions
-    # theta_0 must be between +-80º. Make error control for input theta?
+    # theta_0 must be between +-80º.
     theta = maptheta((theta_0 * np.pi) / 180)
     w = w_0
     # a = a_0 REMOVED. It results from the matematical model
@@ -52,7 +49,7 @@ def simulate(t_max, delta_t, theta_0, w_0):  # a_0 REMOVED from function inputs
         else:
             w += a * delta_t
 
-        a = calculate_acceleration(theta, w, control_Force(theta, w)) #Check F sign in formula. If you use positive force and angle it works and it shouldn't
+        a = calculate_acceleration(theta, w, control_Force(theta, w)) 
         y.append(theta)
     x = np.append(x, t_max)  # ADDED
 
@@ -110,7 +107,7 @@ def mu(value, FS, variable_set_width):  # Considering 5 fuzzy sets.
             return 0
         else:
             return (value-half_set_width)/(half_set_width)
-    elif FS == NG:  # Following is copilot's code untouched
+    elif FS == NG:  # Following is copilot's code
         if value < -variable_set_width:
             return 1
         elif value > -half_set_width:
@@ -183,6 +180,7 @@ def mu_printer(var0,varf,dx,variable_width):
     plt.legend()
     plt.show()
 
-mu_printer(-1.5*Force_set_width,1.5*Force_set_width,0.001,Force_set_width)
-mu_printer(-theta_limit,theta_limit,0.001,theta_set_width)
-simulate(10, 0.0001, 80, 0)  # Removed acceleration from function inputs
+#Plots of mu functions used for debugging. Uncomment to use.
+#mu_printer(-1.5*Force_set_width,1.5*Force_set_width,0.001,Force_set_width)
+#mu_printer(-theta_limit,theta_limit,0.001,theta_set_width)
+simulate(10, 0.0001, 60, 1)  # Removed acceleration from function inputs
