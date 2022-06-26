@@ -57,6 +57,24 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
 
     return x, t
 
+def random_extract(x,t,extract_size):
+    """Extracts a random subset of the data.
+
+    Args:
+        x (np array): Input data (Features)
+        t (np array): Targets
+        extract_size (int): Size of the subset to extract
+
+    Returns:
+        np array: Input data (Features)
+        np array: Targets
+    """
+    randomgen = np.random.default_rng()
+    indices = randomgen.choice(x.shape[0], extract_size, replace=False)
+
+    return x_red,t_red,x_rand,t_rand
+
+
 
 def inicializar_pesos(n_entrada, n_capa_2, n_capa_3):
     """Randomly initializes the weights and biases of the neural network.
@@ -64,7 +82,6 @@ def inicializar_pesos(n_entrada, n_capa_2, n_capa_3):
         n_entrada (int): Neurons in the input layer
         n_capa_2 (int): Neurons in the hidden layer
         n_capa_3 (int): Neurons in the output layer
-
     Returns:
         dictionary: It contains the weights and biases of the neural network.
     """
@@ -121,6 +138,7 @@ def clasificar(x, pesos):
     # podria contener varios ejemplos), buscamos los maximos a lo largo del axis=1 
     # (es decir, por filas)
     max_scores = np.argmax(resultados_feed_forward["y"], axis=1)
+
 
     # Tomamos el primero de los maximos (podria usarse otro criterio, como ser eleccion aleatoria)
     # Nuevamente, dado que max_scores puede contener varios renglones (uno por cada ejemplo),
