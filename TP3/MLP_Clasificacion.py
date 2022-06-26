@@ -5,6 +5,16 @@ import matplotlib.pyplot as plt
 # CS231n Convolutional Neural Networks for Visual Recognition
 # (https://cs231n.github.io/neural-networks-case-study/)
 def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
+    """Generates classification data with a given number of classes and examples.
+
+    Args:
+        cantidad_ejemplos (_int_): Number of examples to generate
+        cantidad_clases (_int_): Number of previous examples' classes
+
+    Returns:
+        x (_np array->3n x 2_): 2 Features
+        t (_np array->3n x 1_): Targets
+    """
     FACTOR_ANGULO = 0.79
     AMPLITUD_ALEATORIEDAD = 0.1
 
@@ -49,6 +59,15 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
 
 
 def inicializar_pesos(n_entrada, n_capa_2, n_capa_3):
+    """Randomly initializes the weights and biases of the neural network.
+    Args:
+        n_entrada (int): Neurons in the input layer
+        n_capa_2 (int): Neurons in the hidden layer
+        n_capa_3 (int): Neurons in the output layer
+
+    Returns:
+        dictionary: It contains the weights and biases of the neural network.
+    """
     randomgen = np.random.default_rng()
 
     w1 = 0.1 * randomgen.standard_normal((n_entrada, n_capa_2))
@@ -59,8 +78,17 @@ def inicializar_pesos(n_entrada, n_capa_2, n_capa_3):
 
     return {"w1": w1, "b1": b1, "w2": w2, "b2": b2}
 
-
 def ejecutar_adelante(x, pesos):
+    """Runs Forward Propagation on the neural network.
+
+    Args:
+        x (np array): Input data (Features)
+        pesos (dictionary): Weights and biases of the neural network
+
+    Returns:
+        dictionary: Contains the output and intermidiate varaibles of the neural network.
+    """
+
     # Funcion de entrada (a.k.a. "regla de propagacion") para la primera capa oculta
     z = x.dot(pesos["w1"]) + pesos["b1"]
 
@@ -75,6 +103,16 @@ def ejecutar_adelante(x, pesos):
 
 
 def clasificar(x, pesos):
+    """Using the results of Forward Propagation, decides the class of the input data.
+
+    Args:
+        x (np array): Input data (Features)
+        pesos (dictionary): Weights and biases of the neural network
+
+    Returns:
+        int: Calculated class of each example in the input data
+    """
+
     # Corremos la red "hacia adelante"
     resultados_feed_forward = ejecutar_adelante(x, pesos)
     
@@ -92,7 +130,18 @@ def clasificar(x, pesos):
 # x: n entradas para cada uno de los m ejemplos(nxm)
 # t: salida correcta (target) para cada uno de los m ejemplos (m x 1)
 # pesos: pesos (W y b)
+# La función actualiza el valor del diccionario pesos
 def train(x, t, pesos, learning_rate, epochs):
+    """Changes the weights and biases(all in the dictionary "pesos") of the neural network. 
+
+    Args:
+        x (np array): Input data (Features)
+        t (np array): Output data (Targets)
+        pesos (dictionary): Weights and biases of the neural network
+        learning_rate (float): Hyperparameter that determines the pace of change of the weights for each epoch
+        epochs (int): Number of epochs to train the neural network
+    """
+
     # Cantidad de filas (i.e. cantidad de ejemplos)
     m = np.size(x, 0) 
     
@@ -162,6 +211,14 @@ def train(x, t, pesos, learning_rate, epochs):
 
 
 def iniciar(numero_clases, numero_ejemplos, graficar_datos):
+    """Runs all the NN functions.
+
+    Args:
+        numero_clases (int): Number of classes
+        numero_ejemplos (int): Number of examples
+        graficar_datos (bool): If True, plots the data
+    """
+
     # Generamos datos
     x, t = generar_datos_clasificacion(numero_ejemplos, numero_clases)
 
@@ -182,4 +239,4 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos):
     train(x, t, pesos, LEARNING_RATE, EPOCHS)
 
 
-iniciar(numero_clases=3, numero_ejemplos=300, graficar_datos=False)
+iniciar(numero_clases=3, numero_ejemplos=500, graficar_datos=True)
