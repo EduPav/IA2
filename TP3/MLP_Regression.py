@@ -4,60 +4,96 @@ import matplotlib.pyplot as plt
 # Generador basado en ejemplo del curso CS231 de Stanford: 
 # CS231n Convolutional Neural Networks for Visual Recognition
 # (https://cs231n.github.io/neural-networks-case-study/)
-def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
-    """Generates classification data with a given number of classes and examples.
+
+def cardinal_sine_data_generator(x1_neg_lim,x1_pos_lim,x2_neg_lim,x2_pos_lim,number_of_examples,plot_data):
+    """Receives x1 and x2 limits and generates a number of examples based in a sine cardinal function with noise 
+    It plots the data if plot_data is True.
 
     Args:
-        cantidad_ejemplos (_int_): Number of examples to generate
-        cantidad_clases (_int_): Number of previous examples' classes
-
+        axis_lims (_float_): Limits of the working function
+        number_of_examples (_int_): Number of examples to generate
+        plot_data (_bool_): If True, plots the data
+    
     Returns:
         x (_np array->3n x 2_): 2 Features
-        t (_np array->3n x 1_): Targets
+        y (_np array->3n x 1_): Function values
+
     """
-    FACTOR_ANGULO = 0.79
-    AMPLITUD_ALEATORIEDAD = 0.1
+    #Generate arrays of x1 and x2 that go from -14 to +14 with a step of 0.1
+    x1_axis_values = np.arange(x1_neg_lim,x1_pos_lim,0.1)
+    x2_axis_values = np.arange(x2_neg_lim,x2_pos_lim,0.1)
 
-    # Calculamos la cantidad de puntos por cada clase, asumiendo la misma cantidad para cada 
-    # una (clases balanceadas)
-    n = int(cantidad_ejemplos / cantidad_clases)
+    x1_matrix = np.tile(x1_axis_values,(len(x2_axis_values),1))
+    x1_matrix=x1_matrix.T
+    #Create a matrix x2 with x2 as rows repeated according to size of x1
+    x2_matrix = np.tile(x2_axis_values,(len(x1_axis_values),1))
 
-    # Entradas: 2 columnas (x1 y x2)
-    x = np.zeros((cantidad_ejemplos, 2))
-    # Salida deseada ("target"): 1 columna que contendra la clase correspondiente (codificada como un entero)
-    t = np.zeros(cantidad_ejemplos, dtype="uint8")  # 1 columna: la clase correspondiente (t -> "target")
-
-    randomgen = np.random.default_rng()
-
-    # Por cada clase (que va de 0 a cantidad_clases)...
-    for clase in range(cantidad_clases):
-        # Tomando la ecuacion parametrica del circulo (x = r * cos(t), y = r * sin(t)), generamos 
-        # radios distribuidos uniformemente entre 0 y 1 para la clase actual, y agregamos un poco de
-        # aleatoriedad
-        radios = np.linspace(0, 1, n) + AMPLITUD_ALEATORIEDAD * randomgen.standard_normal(size=n)
-
-        # ... y angulos distribuidos tambien uniformemente, con un desfasaje por cada clase
-        angulos = np.linspace(clase * np.pi * FACTOR_ANGULO, (clase + 1) * np.pi * FACTOR_ANGULO, n)
-
-        # Generamos un rango con los subindices de cada punto de esta clase. Este rango se va
-        # desplazando para cada clase: para la primera clase los indices estan en [0, n-1], para
-        # la segunda clase estan en [n, (2 * n) - 1], etc.
-        indices = range(clase * n, (clase + 1) * n)
-
-        # Generamos las "entradas", los valores de las variables independientes. Las variables:
-        # radios, angulos e indices tienen n elementos cada una, por lo que le estamos agregando
-        # tambien n elementos a la variable x (que incorpora ambas entradas, x1 y x2)
-        x1 = radios * np.sin(angulos)
-        x2 = radios * np.cos(angulos)
-        x[indices] = np.c_[x1, x2]
-
-        # Guardamos el valor de la clase que le vamos a asociar a las entradas x1 y x2 que acabamos
-        # de generar
-        t[indices] = clase
-
-    return x, t
+    #Cardinal sine based function, with particular modifications
+    y_matrix=-10*np.sin(np.sqrt(x1_matrix**2+x2_matrix**2))/np.sqrt(x1_matrix**2+x2_matrix**2)+50
+    
+    #Create a matrix of random gaussian numbers with the size of y and values between -1 and 1
+    noise = np.random.normal(0,0.5,y_matrix.shape)
+    y_matrix+=noise
+    if plot_data:
+        #Make a 3D plot of y_matrix 
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.plot_surface(x1_matrix,x2_matrix,y_matrix,cmap='viridis',edgecolor='none')
+        ax.set_xlabel('x1')
+        ax.set_ylabel('x2')
+        ax.set_zlabel('y')
+        ax.set_title('Original training function')
+        plt.show()
 
 
+    #Generate random examples based on the previous function
+    #Generate number_of_examples random floats between x1_neg_lim and x1_pos_lim
+    x1= np.random.uniform(x1_neg_lim,x1_pos_lim,number_of_examples)
+    x2= np.random.uniform(x2_neg_lim,x2_pos_lim,number_of_examples)
+    
+    x= np.column_stack((x1,x2))
+    y= -10*np.sin(np.sqrt(x1**2+x2**2))/np.sqrt(x1**2+x2**2)+50+np.random.normal(0,0.5,number_of_examples)
+    
+    if plot_data:
+        #Plot the random generation of examples
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+
+        #Plot the 3D plot of the points with x as axis and y as its value
+        ax.scatter(x[:,0],x[:,1],y,c='r',marker='o')
+        ax.set_xlabel('x1')
+        ax.set_ylabel('x2')
+        ax.set_zlabel('y')
+        ax.set_title('Random generation of examples')
+        plt.show()
+
+    y=y.reshape(number_of_examples,1)
+    return x,y
+
+def sigmoid(x):
+    """Sigmoid function.
+    Args:
+        x (np array): Input data
+    Returns:
+        np array: Output data
+    """
+    return 1 / (1 + np.exp(-x))
+
+
+def normalization(x):
+    """Normalizes the input data between 1 and -1.
+
+    Args:
+        x (np array): Input data
+
+    Returns:
+        np array: Normalized input data
+    """
+    mu=np.mean(x)
+    x_norm=(x - mu) / np.max(np.abs(x))
+    return x_norm,mu
+    #As we know that features are between -14 and 14 we can use max without risk of picking one outlier.
+    #In a real application we should kick outliers
 
 def inicializar_pesos(n_entrada, n_capa_2, n_capa_3):
     """Randomly initializes the weights and biases of the neural network.
@@ -70,11 +106,11 @@ def inicializar_pesos(n_entrada, n_capa_2, n_capa_3):
     """
     randomgen = np.random.default_rng()
 
-    w1 = 0.1 * randomgen.standard_normal((n_entrada, n_capa_2))
-    b1 = 0.1 * randomgen.standard_normal((1, n_capa_2))
+    w1 = 0.01 * randomgen.standard_normal((n_entrada, n_capa_2))
+    b1 = 0.01 * randomgen.standard_normal((1, n_capa_2))
 
-    w2 = 0.1 * randomgen.standard_normal((n_capa_2, n_capa_3))
-    b2 = 0.1 * randomgen.standard_normal((1,n_capa_3))
+    w2 = 0.01 * randomgen.standard_normal((n_capa_2, n_capa_3))
+    b2 = 0.01 * randomgen.standard_normal((1,n_capa_3))
 
     return {"w1": w1, "b1": b1, "w2": w2, "b2": b2}
 
@@ -92,8 +128,8 @@ def ejecutar_adelante(x, pesos):
     # Funcion de entrada (a.k.a. "regla de propagacion") para la primera capa oculta
     z = x.dot(pesos["w1"]) + pesos["b1"]
 
-    # Funcion de activacion ReLU para la capa oculta (h -> "hidden")
-    h = np.maximum(0, z)
+    # Funcion de activacion Sigmoid
+    h = sigmoid(z)
 
     # Salida de la red (funcion de activacion lineal). Esto incluye la salida de todas
     # las neuronas y para todos los ejemplos proporcionados
@@ -129,9 +165,10 @@ def clasificar(x, pesos):
     return max_scores[:, 0]
 
 
+
 def Loss(y, t):
     
-    """Calculates the loss of the neural network.
+    """Calculates the MSE loss of the neural network.
 
     Args:
         y (np array): Output of the neural network
@@ -140,36 +177,20 @@ def Loss(y, t):
     Returns:
         int: Total loss of the neural network
     """
-    m=np.size(y, 0)
-    # a. Exponencial de todos los scores
-    exp_scores = np.exp(y)
-    # b. Suma de todos los exponenciales de los scores, fila por fila (ejemplo por ejemplo).
-    #    Mantenemos las dimensiones (indicamos a NumPy que mantenga la segunda dimension del
-    #    arreglo, aunque sea una sola columna, para permitir el broadcast correcto en operaciones
-    #    subsiguientes)
-    sum_exp_scores = np.sum(exp_scores, axis=1, keepdims=True)
+    return np.mean((t - y) ** 2)
 
-    # c. "Probabilidades": normalizacion de las exponenciales del score de cada clase (dividiendo por 
-    #    la suma de exponenciales de todos los scores), fila por fila
-    p = exp_scores / sum_exp_scores
 
-    # d. Calculo de la funcion de perdida global. Solo se usa la probabilidad de la clase correcta, 
-    #    que tomamos del array t ("target")
-    loss = (1 / m) * np.sum( -np.log( p[range(m), t] ))
-
-    return p, loss
-
-def back_propagation(p,x,t,h,z,w2):
+def back_propagation(x,t,h,z,w2,y):
 
     """Calculates changes for weights and biases of the neural network.
 
     Args:
-        p (np array): Probabilities of the classes
         x (np array): Input data (Features)
         t (np array): Targets
         h (np array): Output of the hidden layer
         z (np array): Input of the hidden layer
-        w2 (np array): Weights of the output layer
+        w2(np array): Weights of the output layer
+        y (np array): Output of the output layer
 
     Returns:
         dL_dw1 (np array): Change in the weights of the input layer
@@ -180,21 +201,21 @@ def back_propagation(p,x,t,h,z,w2):
     """
 
     m=np.size(x, 0)
-    dL_dy = p                # Para todas las salidas, L' = p (la probabilidad)...
-    dL_dy[range(m), t] -= 1  # ... excepto para la clase correcta
-    dL_dy /= m
+    dL_dy = 2*(y-t)/m        #(changed)
 
-    dL_dw2 = h.T.dot(dL_dy)                         # Ajuste para w2
-    dL_db2 = np.sum(dL_dy, axis=0, keepdims=True)   # Ajuste para b2
+    dL_dw2 = h.T.dot(dL_dy)                         # Ajuste para w2    (= to classification)
+    dL_db2 = np.sum(dL_dy, axis=0, keepdims=True)   # Ajuste para b2    (= to classification)
 
-    dL_dh = dL_dy.dot(w2.T)
+    dL_dh = dL_dy.dot(w2.T)     #(= to classification)
     
-    dL_dz = dL_dh       # El calculo dL/dz = dL/dh * dh/dz. La funcion "h" es la funcion de activacion de la capa oculta,
-    dL_dz[z <= 0] = 0   # para la que usamos ReLU. La derivada de la funcion ReLU: 1(z > 0) (0 en otro caso)
+
+    dh_dz=sigmoid(z)*(1-sigmoid(z)) #(changed)
+    dL_dz = dL_dh*dh_dz             #(changed)
 
     dL_dw1 = x.T.dot(dL_dz)                         # Ajuste para w1
     dL_db1 = np.sum(dL_dz, axis=0, keepdims=True)   # Ajuste para b1
     return dL_dw1, dL_db1, dL_dw2, dL_db2
+
 
 # x: n entradas para cada uno de los m ejemplos(nxm)
 # t: salida correcta (target) para cada uno de los m ejemplos (m x 1)
@@ -222,7 +243,7 @@ def train(x, t, pesos, learning_rate, epochs):
         z = resultados_feed_forward["z"]
 
         # LOSS
-        p, loss = Loss(y, t)
+        loss = Loss(y, t)
 
         # Mostramos solo cada 1000 epochs
         if i %1000 == 0:
@@ -235,7 +256,8 @@ def train(x, t, pesos, learning_rate, epochs):
         b2 = pesos["b2"]
 
         # Ajustamos los pesos: Backpropagation
-        dL_dw1, dL_db1, dL_dw2, dL_db2=back_propagation(p,x,t,h,z,w2)
+        dL_dw1, dL_db1, dL_dw2, dL_db2=back_propagation(x,t,h,z,w2,y)
+
 
         # Aplicamos el ajuste a los pesos
         w1 += -learning_rate * dL_dw1
@@ -251,7 +273,7 @@ def train(x, t, pesos, learning_rate, epochs):
         pesos["b2"] = b2
 
 
-def iniciar(numero_clases, numero_ejemplos, graficar_datos):
+def iniciar(numero_ejemplos, graficar_datos):
     """Runs all the NN functions.
 
     Args:
@@ -261,18 +283,14 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos):
     """
 
     # Generamos datos
-    x, t = generar_datos_clasificacion(numero_ejemplos, numero_clases)
-
-    # Graficamos los datos si es necesario
-    if graficar_datos:
-        # Parametro: "c": color (un color distinto para cada clase en t)
-        plt.scatter(x[:, 0], x[:, 1], c=t)
-        plt.show()
+    x, t = cardinal_sine_data_generator(-14,14,-14,14,numero_ejemplos,graficar_datos)
+    x[:,0],x0_mu=normalization(x[:,0])
+    x[:,1],x1_mu=normalization(x[:,1])
 
     # Inicializa pesos de la red
     NEURONAS_CAPA_OCULTA = 100
     NEURONAS_ENTRADA = 2
-    pesos = inicializar_pesos(n_entrada=NEURONAS_ENTRADA, n_capa_2=NEURONAS_CAPA_OCULTA, n_capa_3=numero_clases)
+    pesos = inicializar_pesos(n_entrada=NEURONAS_ENTRADA, n_capa_2=NEURONAS_CAPA_OCULTA, n_capa_3=1)
 
     # Entrena
     LEARNING_RATE=1
@@ -280,4 +298,4 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos):
     train(x, t, pesos, LEARNING_RATE, EPOCHS)
 
 
-iniciar(numero_clases=3, numero_ejemplos=500, graficar_datos=True)
+iniciar(numero_ejemplos=1000, graficar_datos=False)
