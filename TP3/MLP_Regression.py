@@ -138,34 +138,6 @@ def ejecutar_adelante(x, pesos):
     return {"z": z, "h": h, "y": y}
 
 
-def clasificar(x, pesos):
-    """Using the results of Forward Propagation, decides the class of the input data.
-
-    Args:
-        x (np array): Input data (Features)
-        pesos (dictionary): Weights and biases of the neural network
-
-    Returns:
-        int: Calculated class of each example in the input data
-    """
-
-    # Corremos la red "hacia adelante"
-    resultados_feed_forward = ejecutar_adelante(x, pesos)
-    
-    # Buscamos la(s) clase(s) con scores mas altos (en caso de que haya mas de una con 
-    # el mismo score estas podrian ser varias). Dado que se puede ejecutar en batch (x 
-    # podria contener varios ejemplos), buscamos los maximos a lo largo del axis=1 
-    # (es decir, por filas)
-    max_scores = np.argmax(resultados_feed_forward["y"], axis=1)
-
-
-    # Tomamos el primero de los maximos (podria usarse otro criterio, como ser eleccion aleatoria)
-    # Nuevamente, dado que max_scores puede contener varios renglones (uno por cada ejemplo),
-    # retornamos la primera columna
-    return max_scores[:, 0]
-
-
-
 def Loss(y, t):
     
     """Calculates the MSE loss of the neural network.
@@ -199,8 +171,8 @@ def back_propagation(x,t,h,z,w2,y):
         dL_db2 (np array): Change in the biases of the output layer
         
     """
-
     m=np.size(x, 0)
+
     dL_dy = 2*(y-t)/m        #(changed)
 
     dL_dw2 = h.T.dot(dL_dy)                         # Ajuste para w2    (= to classification)
@@ -232,9 +204,6 @@ def train(x, t, pesos, learning_rate, epochs):
         epochs (int): Number of epochs to train the neural network
     """
 
-    # Cantidad de filas (i.e. cantidad de ejemplos)
-    m = np.size(x, 0) 
-    
     for i in range(epochs):
         # Ejecucion de la red hacia adelante
         resultados_feed_forward = ejecutar_adelante(x, pesos)
@@ -245,8 +214,8 @@ def train(x, t, pesos, learning_rate, epochs):
         # LOSS
         loss = Loss(y, t)
 
-        # Mostramos solo cada 1000 epochs
-        if i %1000 == 0:
+        # Mostramos solo cada 100 epochs
+        if i %1 == 0:
             print("Loss epoch", i, ":", loss)
 
         # Extraemos los pesos a variables locales
@@ -293,9 +262,9 @@ def iniciar(numero_ejemplos, graficar_datos):
     pesos = inicializar_pesos(n_entrada=NEURONAS_ENTRADA, n_capa_2=NEURONAS_CAPA_OCULTA, n_capa_3=1)
 
     # Entrena
-    LEARNING_RATE=1
-    EPOCHS=10000
+    LEARNING_RATE=0.01
+    EPOCHS=101
     train(x, t, pesos, LEARNING_RATE, EPOCHS)
 
 
-iniciar(numero_ejemplos=1000, graficar_datos=False)
+iniciar(numero_ejemplos=1000, graficar_datos=True)
