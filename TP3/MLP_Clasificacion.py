@@ -24,8 +24,15 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
 
     # Entradas: 2 columnas (x1 y x2)
     x = np.zeros((cantidad_ejemplos, 2))
+    x_red = np.zeros((int(3*cantidad_ejemplos/5), 2))
+    x_val = np.zeros((int(cantidad_ejemplos/5), 2))
+    x_test = np.zeros((int(cantidad_ejemplos/5), 2))
     # Salida deseada ("target"): 1 columna que contendra la clase correspondiente (codificada como un entero)
     t = np.zeros(cantidad_ejemplos, dtype="uint8")  # 1 columna: la clase correspondiente (t -> "target")
+    t_red = np.zeros(int(3*cantidad_ejemplos/5), dtype="uint8")
+    t_val = np.zeros(int(cantidad_ejemplos/5), dtype="uint8")
+    t_test = np.zeros(int(cantidad_ejemplos/5), dtype="uint8")
+
 
     randomgen = np.random.default_rng()
 
@@ -44,18 +51,30 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
         # la segunda clase estan en [n, (2 * n) - 1], etc.
         indices = range(clase * n, (clase + 1) * n)
 
+        indices_red = indices[:int(3*n/5)]
+        space_indices_red = range(clase*n - clase*int(2*n/5), (clase+1)*n - (clase+1)*int(2*n/5))
+        indices_val = indices[int(3*n/5):int(4*n/5)]
+        space_indices_val = range(clase*n - clase*int(4*n/5), (clase+1)*n - (clase+1)*int(4*n/5))
+        indices_test = indices[int(4*n/5):]
+        space_indices_test = range(clase*n - clase*int(4*n/5), (clase+1)*n - (clase+1)*int(4*n/5))
         # Generamos las "entradas", los valores de las variables independientes. Las variables:
         # radios, angulos e indices tienen n elementos cada una, por lo que le estamos agregando
         # tambien n elementos a la variable x (que incorpora ambas entradas, x1 y x2)
         x1 = radios * np.sin(angulos)
         x2 = radios * np.cos(angulos)
         x[indices] = np.c_[x1, x2]
-
+        x_red[space_indices_red] = x[indices_red].copy()
+        x_val[space_indices_val] = x[indices_val].copy()
+        x_test[space_indices_test] = x[indices_test].copy()
+    
         # Guardamos el valor de la clase que le vamos a asociar a las entradas x1 y x2 que acabamos
         # de generar
         t[indices] = clase
-
-    return x, t
+        t_red[space_indices_red] = t[indices_red].copy()
+        t_val[space_indices_val] = t[indices_val].copy()
+        t_test[space_indices_test] = t[indices_test].copy()
+ 
+    return x_red, t_red, x_val, t_val, x_test, t_test
 
 
 
@@ -261,12 +280,12 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos):
     """
 
     # Generamos datos
-    x, t = generar_datos_clasificacion(numero_ejemplos, numero_clases)
+    x_red, t_red, x_val, t_val, x_test, t_test = generar_datos_clasificacion(numero_ejemplos, numero_clases)
 
     # Graficamos los datos si es necesario
     if graficar_datos:
         # Parametro: "c": color (un color distinto para cada clase en t)
-        plt.scatter(x[:, 0], x[:, 1], c=t)
+        plt.scatter(x_red[:, 0], x_red[:, 1], c=t_red)
         plt.show()
 
     # Inicializa pesos de la red
@@ -277,7 +296,7 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos):
     # Entrena
     LEARNING_RATE=1
     EPOCHS=10000
-    train(x, t, pesos, LEARNING_RATE, EPOCHS)
+    train(x_val, t_val, pesos, LEARNING_RATE, EPOCHS)
 
 
-iniciar(numero_clases=3, numero_ejemplos=500, graficar_datos=True)
+iniciar(numero_clases=3, numero_ejemplos=600, graficar_datos=True)
