@@ -5,16 +5,6 @@ import matplotlib.pyplot as plt
 # CS231n Convolutional Neural Networks for Visual Recognition
 # (https://cs231n.github.io/neural-networks-case-study/)
 def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
-    """Generates classification data with a given number of classes and examples.
-
-    Args:
-        cantidad_ejemplos (_int_): Number of examples to generate
-        cantidad_clases (_int_): Number of previous examples' classes
-
-    Returns:
-        x (_np array->3n x 2_): 2 Features
-        t (_np array->3n x 1_): Targets
-    """
     FACTOR_ANGULO = 0.79
     AMPLITUD_ALEATORIEDAD = 0.1
 
@@ -24,15 +14,8 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
 
     # Entradas: 2 columnas (x1 y x2)
     x = np.zeros((cantidad_ejemplos, 2))
-    x_red = np.zeros((int(3*cantidad_ejemplos/5), 2))
-    x_val = np.zeros((int(cantidad_ejemplos/5), 2))
-    x_test = np.zeros((int(cantidad_ejemplos/5), 2))
     # Salida deseada ("target"): 1 columna que contendra la clase correspondiente (codificada como un entero)
     t = np.zeros(cantidad_ejemplos, dtype="uint8")  # 1 columna: la clase correspondiente (t -> "target")
-    t_red = np.zeros(int(3*cantidad_ejemplos/5), dtype="uint8")
-    t_val = np.zeros(int(cantidad_ejemplos/5), dtype="uint8")
-    t_test = np.zeros(int(cantidad_ejemplos/5), dtype="uint8")
-
 
     randomgen = np.random.default_rng()
 
@@ -42,6 +25,7 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
         # radios distribuidos uniformemente entre 0 y 1 para la clase actual, y agregamos un poco de
         # aleatoriedad
         radios = np.linspace(0, 1, n) + AMPLITUD_ALEATORIEDAD * randomgen.standard_normal(size=n)
+
         # ... y angulos distribuidos tambien uniformemente, con un desfasaje por cada clase
         angulos = np.linspace(clase * np.pi * FACTOR_ANGULO, (clase + 1) * np.pi * FACTOR_ANGULO, n)
 
@@ -50,31 +34,18 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
         # la segunda clase estan en [n, (2 * n) - 1], etc.
         indices = range(clase * n, (clase + 1) * n)
 
-        indices_red = indices[:int(3*n/5)]
-        space_indices_red = range(clase*n - clase*int(2*n/5), (clase+1)*n - (clase+1)*int(2*n/5))
-        indices_val = indices[int(3*n/5):int(4*n/5)]
-        space_indices_val = range(clase*n - clase*int(4*n/5), (clase+1)*n - (clase+1)*int(4*n/5))
-        indices_test = indices[int(4*n/5):]
-        space_indices_test = range(clase*n - clase*int(4*n/5), (clase+1)*n - (clase+1)*int(4*n/5))
         # Generamos las "entradas", los valores de las variables independientes. Las variables:
         # radios, angulos e indices tienen n elementos cada una, por lo que le estamos agregando
         # tambien n elementos a la variable x (que incorpora ambas entradas, x1 y x2)
         x1 = radios * np.sin(angulos)
         x2 = radios * np.cos(angulos)
         x[indices] = np.c_[x1, x2]
-        x_red[space_indices_red] = x[indices_red].copy()
-        x_val[space_indices_val] = x[indices_val].copy()
-        x_test[space_indices_test] = x[indices_test].copy()
-    
+
         # Guardamos el valor de la clase que le vamos a asociar a las entradas x1 y x2 que acabamos
         # de generar
         t[indices] = clase
-        t_red[space_indices_red] = t[indices_red].copy()
-        t_val[space_indices_val] = t[indices_val].copy()
-        t_test[space_indices_test] = t[indices_test].copy()
- 
-    return x_red, t_red, x_val, t_val, x_test, t_test
 
+    return x, t
 
 
         #-------------------------------------------------------------------------------------------------------#
@@ -230,15 +201,15 @@ def clasificar(x, pesos):
     # retornamos la primera columna
     return max_scores[:, 0]
 
-def calculate_precision(y,t):
-    tp_list = list(y & t)
-    tp = tp_list.count(1)
+def calculate_accuracy(y,t):
+    corrects_list = list(y & t)
+    corrects = corrects_list.count(1)
     
-    fp_list = list(y & ~t)
-    fp = fp_list.count(1)
+    mistakes_list = list(y & ~t)
+    mistakes = mistakes_list.count(1)
     
-    precision = (tp) / (tp+fp)
-    return precision
+    accuracy = 100*(corrects) / (corrects+mistakes)
+    return accuracy
 
 def Loss(y, t):
     
@@ -412,7 +383,7 @@ def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
         pesos["b2"] = b2
 
 
-def iniciar(numero_clases, numero_ejemplos, graficar_datos):
+def iniciar(numero_clases, numero_ejemplos, graficar_datos,hidden,learning_rate,epochs,activation):
     """Runs all the NN functions.
 
     Args:
@@ -420,33 +391,48 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos):
         numero_ejemplos (int): Number of examples
         graficar_datos (bool): If True, plots the data
     """
-
     # Generamos datos
-    x_train, t_train, x_val, t_val, x_test, t_test = generar_datos_clasificacion(numero_ejemplos, numero_clases)
-    
+    x_train, t_train = generar_datos_clasificacion(numero_ejemplos, numero_clases)
+    #split the data
+    x_train,t_train,x_val,t_val=random_extract(x_train,t_train,int(numero_ejemplos/5))
+    x_train,t_train,x_test,t_test=random_extract(x_train,t_train,int(numero_ejemplos/5))
+
 
     # Graficamos los datos si es necesario
     if graficar_datos:
         # Parametro: "c": color (un color distinto para cada clase en t)
+        #Every image in the same plot
+        plt.subplot(1,3,1)
         plt.scatter(x_train[:, 0], x_train[:, 1], c=t_train)
-        plt.show()
+        plt.title("Training data ("+str(t_train.shape[0])+"examples)")
+        plt.subplot(1,3,2)
         plt.scatter(x_val[:,0], x_val[:,1], c=t_val)
-        plt.show()
+        plt.title("Validation data ("+str(t_val.shape[0])+"examples)")
+        plt.subplot(1,3,3)
         plt.scatter(x_test[:,0], x_test[:,1], c=t_test)
+        plt.title("Test data ("+str(t_test.shape[0])+"examples)")
         plt.show()
-        print(x_train.shape, x_val.shape, x_test.shape)
+
+
 
 
     # Inicializa pesos de la red
-    NEURONAS_CAPA_OCULTA = 100
+    NEURONAS_CAPA_OCULTA = hidden
     NEURONAS_ENTRADA = 2
     pesos = inicializar_pesos(n_entrada=NEURONAS_ENTRADA, n_capa_2=NEURONAS_CAPA_OCULTA, n_capa_3=numero_clases)
 
     # Entrena
-    LEARNING_RATE=1
-    EPOCHS=10000
+    LEARNING_RATE=learning_rate
+    EPOCHS=epochs
     N = 1000
     train(x_train, t_train, x_val, t_val, pesos, LEARNING_RATE, EPOCHS, N)
 
+    #Evaluate the model (our pesos dictionary has been trained)
+    y_test=ejecutar_adelante(x_test,pesos)["y"]
+    Acc=calculate_accuracy(y_test,t_test)
+    print("The model accuracy is: ",Acc,"%")
+    return Acc
 
-iniciar(numero_clases=3, numero_ejemplos=600, graficar_datos=True)
+
+
+Acc=iniciar(numero_clases=3, numero_ejemplos=1000, graficar_datos=True,hidden=100,learning_rate=1,epochs=10000,activation="sigmoid")
