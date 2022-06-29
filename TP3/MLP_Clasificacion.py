@@ -219,7 +219,7 @@ def back_propagation(p,x,t,h,z,w2):
 # t: salida correcta (target) para cada uno de los m ejemplos (m x 1)
 # pesos: pesos (W y b)
 # La función actualiza el valor del diccionario pesos
-def train(x, t, pesos, learning_rate, epochs):
+def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
     """Changes the weights and biases(all in the dictionary "pesos") of the neural network. 
 
     Args:
@@ -233,6 +233,12 @@ def train(x, t, pesos, learning_rate, epochs):
     # Cantidad de filas (i.e. cantidad de ejemplos)
     m = np.size(x, 0) 
     
+    
+    verify = False
+    #m_val = np.size(x_val, 0)
+    iteration = 0
+    internal_counter = 0
+
     for i in range(epochs):
         # Ejecucion de la red hacia adelante
         resultados_feed_forward = ejecutar_adelante(x, pesos)
@@ -242,6 +248,50 @@ def train(x, t, pesos, learning_rate, epochs):
 
         # LOSS
         p, loss = Loss(y, t)
+
+
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+        #------------------------------------------------ITEM 3-------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+        
+        if iteration == N:
+            iteration = 0
+
+            resultados_feed_forward_validation = ejecutar_adelante(x_val, pesos)
+            y_val = resultados_feed_forward_validation["y"]
+            # exp_scores_validation = np.exp(y_val)
+            # sum_exp_scores_validation = np.sum(exp_scores_validation, axis=1, keepdims=True)
+            # p_val = exp_scores_validation / sum_exp_scores_validation
+
+            #validation_loss = (1 / m_val) * np.sum( -np.log( p_val[range(m_val), t_val] ))
+
+            p2, validation_loss = Loss(y_val, t_val)
+            if internal_counter == 0:
+                pass
+            else:
+                if validation_loss > (validation_loss_ant + validation_loss_ant*0.1):
+                    print("Overfitting")
+                    verify = True
+            internal_counter = internal_counter + 1
+            validation_loss_ant = validation_loss
+
+        if verify:
+            break
+        iteration = iteration + 1
+
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+
+
+
+
+
+
 
         # Mostramos solo cada 1000 epochs
         if i %1000 == 0:
@@ -296,7 +346,8 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos):
     # Entrena
     LEARNING_RATE=1
     EPOCHS=10000
-    train(x_val, t_val, pesos, LEARNING_RATE, EPOCHS)
+    N = 1000
+    train(x_red, t_red, x_val, t_val, pesos, LEARNING_RATE, EPOCHS, N)
 
 
 iniciar(numero_clases=3, numero_ejemplos=600, graficar_datos=True)
