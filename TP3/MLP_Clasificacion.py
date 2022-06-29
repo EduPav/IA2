@@ -77,6 +77,75 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
 
 
 
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+        #------------------------------------------------ITEM 4-------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+
+
+def generar_datos_clasificacion2(cantidad_ejemplos, cantidad_clases):
+    FACTOR_ANGULO = 0.5#0.79
+    AMPLITUD_ALEATORIEDAD = 0.11
+
+    # Calculamos la cantidad de puntos por cada clase, asumiendo la misma cantidad para cada 
+    # una (clases balanceadas, lo cual es ideal)
+    n = int(cantidad_ejemplos / cantidad_clases) #=300/3=100
+
+    # Entradas: 2 columnas (x1 y x2)
+    x = np.zeros((cantidad_ejemplos, 2)) #300 filas x 2 columnas
+    # Salida deseada ("target"): 1 columna que contendra la clase correspondiente (codificada como un entero)
+    t = np.zeros(cantidad_ejemplos, dtype="uint8")  # 1 columna: la clase correspondiente (t -> "target")
+
+    randomgen = np.random.default_rng()
+
+    # Por cada clase (que va de 0 a cantidad_clases)...
+    for clase in range(cantidad_clases): #Son 3 clases
+        # Tomando la ecuacion parametrica del circulo (x = r * cos(t), y = r * sin(t)), generamos 
+        # radios distribuidos uniformemente entre 0 y 1 para la clase actual, y agregamos un poco de
+        # aleatoriedad
+        #radios = np.linspace(1, 3, n) + AMPLITUD_ALEATORIEDAD * randomgen.standard_normal(size=n)
+        if clase == 0:
+            radios = np.linspace(1, 1.55, n) + AMPLITUD_ALEATORIEDAD * randomgen.standard_normal(size=n)
+        elif clase == 1:
+            radios = np.linspace(1.5, 2.2, n) + AMPLITUD_ALEATORIEDAD * randomgen.standard_normal(size=n)
+        elif clase == 2:
+            radios = np.linspace(2.1, 2.9, n) + AMPLITUD_ALEATORIEDAD * randomgen.standard_normal(size=n)
+        
+        # ... y angulos distribuidos tambien uniformemente, con un desfasaje por cada clase
+        #angulos = np.linspace(clase * np.pi * FACTOR_ANGULO, (clase + 1) * np.pi * FACTOR_ANGULO, n)
+        #angulos = np.linspace((clase*clase) * np.pi * FACTOR_ANGULO, (clase + 1)* np.pi * FACTOR_ANGULO, n)
+        angulos = np.linspace(0, 360/((clase+1)*(clase+1)), n)
+
+        # Generamos un rango con los subindices de cada punto de esta clase. Este rango se va
+        # desplazando para cada clase: para la primera clase los indices estan en [0, n-1], para
+        # la segunda clase estan en [n, (2 * n) - 1], etc.
+        indices = range(clase * n, (clase + 1) * n)
+
+        # Generamos las "entradas", los valores de las variables independientes. Las variables:
+        # radios, angulos e indices tienen n elementos cada una, por lo que le estamos agregando
+        # tambien n elementos a la variable x (que incorpora ambas entradas, x1 y x2)
+        x1 = radios * np.sin(angulos) #y
+        x2 = radios * np.cos(angulos) #x
+        x[indices] = np.c_[x1, x2]
+
+        # Guardamos el valor de la clase que le vamos a asociar a las entradas x1 y x2 que acabamos
+        # de generar
+        t[indices] = clase
+
+    return x, t
+
+
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+        #-------------------------------------------------------------------------------------------------------#
+
+        
+
+
+
 def inicializar_pesos(n_entrada, n_capa_2, n_capa_3):
     """Randomly initializes the weights and biases of the neural network.
     Args:
@@ -270,7 +339,7 @@ def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
             if internal_counter == 0:
                 pass
             else:
-                if validation_loss > (validation_loss_ant + validation_loss_ant*0.1):
+                if validation_loss > (validation_loss_ant):
                     print("Overfitting")
                     verify = True
             internal_counter = internal_counter + 1
