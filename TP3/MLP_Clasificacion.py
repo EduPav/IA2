@@ -215,6 +215,15 @@ def clasificar(x, pesos):
     # retornamos la primera columna
     return max_scores[:, 0]
 
+def calculate_precision(y,t):
+    tp_list = list(y & t)
+    tp = tp_list.count(1)
+    
+    fp_list = list(y & ~t)
+    fp = fp_list.count(1)
+    
+    precision = (tp) / (tp+fp)
+    return precision
 
 def Loss(y, t):
     
@@ -316,8 +325,8 @@ def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
 
         # LOSS
         p, loss = Loss(y, t)
-
-
+        
+        
         #-------------------------------------------------------------------------------------------------------#
         #-------------------------------------------------------------------------------------------------------#
         #------------------------------------------------ITEM 3-------------------------------------------------#
