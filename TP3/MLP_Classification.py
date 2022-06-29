@@ -330,7 +330,7 @@ def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
 
             #validation_loss = (1 / m_val) * np.sum( -np.log( p_val[range(m_val), t_val] ))
 
-            p2, validation_loss = Loss(y_val, t_val)
+            _, validation_loss = Loss(y_val, t_val)
             if internal_counter == 0:
                 pass
             else:
@@ -358,7 +358,7 @@ def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
 
         # Mostramos solo cada 1000 epochs
         if i %1000 == 0:
-            print("Loss epoch", i, ":", loss)
+            print("Validation loss epoch", i, ":", validation_loss)
 
         # Extraemos los pesos a variables locales
         w1 = pesos["w1"]

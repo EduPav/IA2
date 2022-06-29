@@ -79,6 +79,23 @@ def sigmoid(x):
     """
     return 1 / (1 + np.exp(-x))
 
+def random_extract(x,t,extract_size):
+    """Extracts a random subset of the data.
+    Args:
+        x (np array): Input data (Features)
+        t (np array): Targets
+        extract_size (int): Size of the subset to extract
+    Returns:
+        np array: Input data (Features)
+        np array: Targets
+    """
+    rand_indices = np.random.choice(x.shape[0], extract_size, replace=False)
+    x_rand=x[rand_indices]
+    t_rand=t[rand_indices]
+    x_red=np.delete(x, rand_indices, axis=0)
+    t_red=np.delete(t, rand_indices, axis=0)
+
+    return x_red,t_red,x_rand,t_rand
 
 def normalization(x):
     """Normalizes the input data between 1 and -1.
@@ -214,6 +231,31 @@ def train(x, t, pesos, learning_rate, epochs):
         # LOSS
         loss = Loss(y, t)
 
+        if iteration == N:
+            iteration = 0
+
+            resultados_feed_forward_validation = ejecutar_adelante(x_val, pesos)
+            y_val = resultados_feed_forward_validation["y"]
+            # exp_scores_validation = np.exp(y_val)
+            # sum_exp_scores_validation = np.sum(exp_scores_validation, axis=1, keepdims=True)
+            # p_val = exp_scores_validation / sum_exp_scores_validation
+
+            #validation_loss = (1 / m_val) * np.sum( -np.log( p_val[range(m_val), t_val] ))
+
+            _, validation_loss = Loss(y_val, t_val)
+            if internal_counter == 0:
+                pass
+            else:
+                if validation_loss > (validation_loss_ant):
+                    print("Overfitting")
+                    verify = True
+            internal_counter = internal_counter + 1
+            validation_loss_ant = validation_loss
+
+        if verify:
+            break
+        iteration = iteration + 1
+
         # Mostramos solo cada 100 epochs
         if i %1 == 0:
             print("Loss epoch", i, ":", loss)
@@ -252,9 +294,14 @@ def iniciar(numero_ejemplos, graficar_datos):
     """
 
     # Generamos datos
-    x, t = cardinal_sine_data_generator(-14,14,-14,14,numero_ejemplos,graficar_datos)
-    x[:,0],x0_mu=normalization(x[:,0])
-    x[:,1],x1_mu=normalization(x[:,1])
+    x_train, t_train = cardinal_sine_data_generator(-14,14,-14,14,numero_ejemplos,graficar_datos)
+    x_train[:,0],x0_mu=normalization(x_train[:,0])
+    x_train[:,1],x1_mu=normalization(x_train[:,1])
+    # Split the data
+    x_train,t_train,x_val,t_val=random_extract(x_train,t_train,int(numero_ejemplos/5))
+    x_train,t_train,x_test,t_test=random_extract(x_train,t_train,int(numero_ejemplos/5))
+    
+   
 
     # Inicializa pesos de la red
     NEURONAS_CAPA_OCULTA = 100
@@ -264,7 +311,8 @@ def iniciar(numero_ejemplos, graficar_datos):
     # Entrena
     LEARNING_RATE=0.01
     EPOCHS=101
-    train(x, t, pesos, LEARNING_RATE, EPOCHS)
+    train(x_train, t_train, pesos, LEARNING_RATE, EPOCHS)
+
 
 
 iniciar(numero_ejemplos=1000, graficar_datos=True)
