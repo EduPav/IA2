@@ -42,7 +42,6 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
         # radios distribuidos uniformemente entre 0 y 1 para la clase actual, y agregamos un poco de
         # aleatoriedad
         radios = np.linspace(0, 1, n) + AMPLITUD_ALEATORIEDAD * randomgen.standard_normal(size=n)
-
         # ... y angulos distribuidos tambien uniformemente, con un desfasaje por cada clase
         angulos = np.linspace(clase * np.pi * FACTOR_ANGULO, (clase + 1) * np.pi * FACTOR_ANGULO, n)
 

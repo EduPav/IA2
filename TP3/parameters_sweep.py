@@ -15,12 +15,18 @@ activation=["ReLU","Sigmoid"]
 
 total_it=20 #per activation function
 #Pick random combinations of a learning rate, a hidden number of neurons and an activation function without repetition
+used=[]
+accuracy_list=[]
 for act in activation:
     for i in range(total_it):
         axis1=np.random.randint(0,len(learning_rates),1)
         axis2=np.random.randint(0,len(h_sizes),1)
+        if (act,axis1,axis2) in used:
+            continue
+        used.append((act,axis1,axis2))
         learning_rate=learning_rates[axis1]
         h_size=h_sizes[axis2]
+        #accuracy_list.append(iniciar(learning_rate,h_size,act))
         
 
 
