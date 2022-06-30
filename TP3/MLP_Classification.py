@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # Generador basado en ejemplo del curso CS231 de Stanford: 
 # CS231n Convolutional Neural Networks for Visual Recognition
 # (https://cs231n.github.io/neural-networks-case-study/)
-def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
+def classification_data_generator(cantidad_ejemplos, cantidad_clases):
     FACTOR_ANGULO = 0.79
     AMPLITUD_ALEATORIEDAD = 0.1
 
@@ -44,7 +44,7 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
         # Guardamos el valor de la clase que le vamos a asociar a las entradas x1 y x2 que acabamos
         # de generar
         t[indices] = clase
-
+    
     return x, t
 
 
@@ -55,7 +55,7 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
         #-------------------------------------------------------------------------------------------------------#
 
 
-def generar_datos_clasificacion2(cantidad_ejemplos, cantidad_clases):
+def classification_data_generator2(cantidad_ejemplos, cantidad_clases):
     AMPLITUD_ALEATORIEDAD = 0.11
 
     # Calculamos la cantidad de puntos por cada clase, asumiendo la misma cantidad para cada 
@@ -363,7 +363,7 @@ def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
         pesos["b1"] = b1
         pesos["w2"] = w2
         pesos["b2"] = b2
-
+ 
 
 def iniciar(numero_clases, numero_ejemplos, graficar_datos,hidden,learning_rate,epochs,activation):
     """Runs all the NN functions.
@@ -374,9 +374,9 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos,hidden,learning_rate,
         graficar_datos (bool): If True, plots the data
     """
     # Generate the data
-    x_train, t_train = generar_datos_clasificacion(numero_ejemplos, numero_clases)
+    x, t = classification_data_generator(numero_ejemplos, numero_clases)
     # Split the data
-    x_train,t_train,x_val,t_val=random_extract(x_train,t_train,int(numero_ejemplos/5))
+    x_train,t_train,x_val,t_val=random_extract(x,t,int(numero_ejemplos/5))
     x_train,t_train,x_test,t_test=random_extract(x_train,t_train,int(numero_ejemplos/5))
     #Now we have x_Train,t_Train,x_Val,t_Val,x_Test,t_Test with the right values
 
@@ -394,9 +394,6 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos,hidden,learning_rate,
         plt.scatter(x_test[:,0], x_test[:,1], c=t_test)
         plt.title("Test data ("+str(t_test.shape[0])+"examples)")
         plt.show()
-
-
-
 
     # Inicializa pesos de la red
     NEURONAS_CAPA_OCULTA = hidden
