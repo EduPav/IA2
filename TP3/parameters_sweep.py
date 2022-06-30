@@ -17,16 +17,17 @@ total_it=20 #per activation function
 #Pick random combinations of a learning rate, a hidden number of neurons and an activation function without repetition
 used=[]
 accuracy_list=[]
-for act in activation:
-    for i in range(total_it):
-        axis1=np.random.randint(0,len(learning_rates),1)
-        axis2=np.random.randint(0,len(h_sizes),1)
-        if (act,axis1,axis2) in used:
-            continue
-        used.append((act,axis1,axis2))
-        learning_rate=learning_rates[axis1]
-        h_size=h_sizes[axis2]
-        accuracy_list.append(iniciar(numero_clases=3, numero_ejemplos=1000, graficar_datos=True,hidden=h_size,learning_rate=learning_rate,epochs=10000,activation=act))        
-
+act="relu"
+#for act in activation:
+for i in range(total_it):
+    axis1=np.random.randint(0,len(learning_rates),1)
+    axis2=np.random.randint(0,len(h_sizes),1)
+    if (act,axis1,axis2) in used:
+        continue
+    used.append((act,axis1,axis2))
+    learning_rate=learning_rates[axis1[0]]
+    h_size=h_sizes[axis2[0]]
+    print("learning_Rate=",learning_rate,"///hidden_layer_size=",h_size)
+    accuracy_list.append(iniciar(numero_clases=3, numero_ejemplos=1000, graficar_datos=False,hidden=h_size,learning_rate=learning_rate,epochs=1000,activation=act))        
 
     

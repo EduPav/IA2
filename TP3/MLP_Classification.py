@@ -56,7 +56,6 @@ def generar_datos_clasificacion(cantidad_ejemplos, cantidad_clases):
 
 
 def generar_datos_clasificacion2(cantidad_ejemplos, cantidad_clases):
-    FACTOR_ANGULO = 0.5#0.79
     AMPLITUD_ALEATORIEDAD = 0.11
 
     # Calculamos la cantidad de puntos por cada clase, asumiendo la misma cantidad para cada 
@@ -199,16 +198,12 @@ def clasificar(x, pesos):
     # Tomamos el primero de los maximos (podria usarse otro criterio, como ser eleccion aleatoria)
     # Nuevamente, dado que max_scores puede contener varios renglones (uno por cada ejemplo),
     # retornamos la primera columna
-    return max_scores[:, 0]
+    return max_scores
 
 def calculate_accuracy(y,t):
-    corrects_list = list(y & t)
-    corrects = corrects_list.count(1)
-    
-    mistakes_list = list(y & ~t)
-    mistakes = mistakes_list.count(1)
-    
-    accuracy = 100*(corrects) / (corrects+mistakes)
+    corrects=np.sum(y==t) 
+    total=y.shape[0] 
+    accuracy = 100*(corrects) / total
     return accuracy
 
 def Loss(y, t):
@@ -301,7 +296,7 @@ def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
     #m_val = np.size(x_val, 0)
     iteration = 0
     internal_counter = 0
-
+    
     for i in range(epochs):
         # Ejecucion de la red hacia adelante
         resultados_feed_forward = ejecutar_adelante(x, pesos)
@@ -310,7 +305,7 @@ def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
         z = resultados_feed_forward["z"]
 
         # LOSS
-        p, loss = Loss(y, t)
+        p, _ = Loss(y, t)
         
         
         #-------------------------------------------------------------------------------------------------------#
@@ -324,13 +319,8 @@ def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
 
             resultados_feed_forward_validation = ejecutar_adelante(x_val, pesos)
             y_val = resultados_feed_forward_validation["y"]
-            # exp_scores_validation = np.exp(y_val)
-            # sum_exp_scores_validation = np.sum(exp_scores_validation, axis=1, keepdims=True)
-            # p_val = exp_scores_validation / sum_exp_scores_validation
-
-            #validation_loss = (1 / m_val) * np.sum( -np.log( p_val[range(m_val), t_val] ))
-
             _, validation_loss = Loss(y_val, t_val)
+            print("Validation loss epoch", i, ":", validation_loss)
             if internal_counter == 0:
                 pass
             else:
@@ -339,6 +329,7 @@ def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
                     verify = True
             internal_counter = internal_counter + 1
             validation_loss_ant = validation_loss
+            
 
         if verify:
             break
@@ -350,15 +341,6 @@ def train(x, t, x_val, t_val, pesos, learning_rate, epochs, N):
         #-------------------------------------------------------------------------------------------------------#
         #-------------------------------------------------------------------------------------------------------#
 
-
-
-
-
-
-
-        # Mostramos solo cada 1000 epochs
-        if i %1000 == 0:
-            print("Validation loss epoch", i, ":", validation_loss)
 
         # Extraemos los pesos a variables locales
         w1 = pesos["w1"]
@@ -391,12 +373,12 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos,hidden,learning_rate,
         numero_ejemplos (int): Number of examples
         graficar_datos (bool): If True, plots the data
     """
-    # Generamos datos
+    # Generate the data
     x_train, t_train = generar_datos_clasificacion(numero_ejemplos, numero_clases)
-    #split the data
+    # Split the data
     x_train,t_train,x_val,t_val=random_extract(x_train,t_train,int(numero_ejemplos/5))
     x_train,t_train,x_test,t_test=random_extract(x_train,t_train,int(numero_ejemplos/5))
-
+    #Now we have x_Train,t_Train,x_Val,t_Val,x_Test,t_Test with the right values
 
     # Graficamos los datos si es necesario
     if graficar_datos:
@@ -428,11 +410,17 @@ def iniciar(numero_clases, numero_ejemplos, graficar_datos,hidden,learning_rate,
     train(x_train, t_train, x_val, t_val, pesos, LEARNING_RATE, EPOCHS, N)
 
     #Evaluate the model (our pesos dictionary has been trained)
-    y_test=ejecutar_adelante(x_test,pesos)["y"]
+    y_test=clasificar(x_test,pesos)
     Acc=calculate_accuracy(y_test,t_test)
     print("The model accuracy is: ",Acc,"%")
     return Acc
 
 
 
-Acc=iniciar(numero_clases=3, numero_ejemplos=1000, graficar_datos=True,hidden=100,learning_rate=1,epochs=10000,activation="sigmoid")
+#Acc=iniciar(numero_clases=3, numero_ejemplos=1000, graficar_datos=True,hidden=100,learning_rate=1,epochs=100000,activation="sigmoid")
+
+
+
+#Check if overfitting should consider a little increase temporally
+#Accuracy varies too much. We might try fixing the dataset or changing early stop.
+#In parameter sweep we should use one dataset, so we take out of the equation the variability in dataset generation.

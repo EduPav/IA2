@@ -210,7 +210,7 @@ def back_propagation(x,t,h,z,w2,y):
 # t: salida correcta (target) para cada uno de los m ejemplos (m x 1)
 # pesos: pesos (W y b)
 # La función actualiza el valor del diccionario pesos
-def train(x, t, pesos, learning_rate, epochs):
+def train(x, t,x_val,t_val, pesos, learning_rate, epochs,N):
     """Changes the weights and biases(all in the dictionary "pesos") of the neural network. 
 
     Args:
@@ -220,7 +220,9 @@ def train(x, t, pesos, learning_rate, epochs):
         learning_rate (float): Hyperparameter that determines the pace of change of the weights for each epoch
         epochs (int): Number of epochs to train the neural network
     """
-
+    iteration=0
+    verify=False
+    internal_counter=0
     for i in range(epochs):
         # Ejecucion de la red hacia adelante
         resultados_feed_forward = ejecutar_adelante(x, pesos)
@@ -242,7 +244,7 @@ def train(x, t, pesos, learning_rate, epochs):
 
             #validation_loss = (1 / m_val) * np.sum( -np.log( p_val[range(m_val), t_val] ))
 
-            _, validation_loss = Loss(y_val, t_val)
+            validation_loss = Loss(y_val, t_val)
             if internal_counter == 0:
                 pass
             else:
@@ -300,8 +302,7 @@ def iniciar(numero_ejemplos, graficar_datos):
     # Split the data
     x_train,t_train,x_val,t_val=random_extract(x_train,t_train,int(numero_ejemplos/5))
     x_train,t_train,x_test,t_test=random_extract(x_train,t_train,int(numero_ejemplos/5))
-    
-   
+       
 
     # Inicializa pesos de la red
     NEURONAS_CAPA_OCULTA = 100
@@ -311,8 +312,9 @@ def iniciar(numero_ejemplos, graficar_datos):
     # Entrena
     LEARNING_RATE=0.01
     EPOCHS=101
-    train(x_train, t_train, pesos, LEARNING_RATE, EPOCHS)
+    N=10
+    train(x_train, t_train,x_val,t_val, pesos, LEARNING_RATE, EPOCHS,N)
+    print("RMSE:", np.sqrt(Loss(ejecutar_adelante(x_test, pesos)["y"], t_test)))
 
 
-
-iniciar(numero_ejemplos=1000, graficar_datos=True)
+iniciar(numero_ejemplos=2000, graficar_datos=True)
