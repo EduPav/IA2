@@ -37,13 +37,13 @@ def cardinal_sine_data_generator(x1_neg_lim,x1_pos_lim,x2_neg_lim,x2_pos_lim,num
     if plot_data:
         #Make a 3D plot of y_matrix 
         fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
+        ax = fig.add_subplot(121, projection='3d')
         ax.plot_surface(x1_matrix,x2_matrix,y_matrix,cmap='viridis',edgecolor='none')
         ax.set_xlabel('x1')
         ax.set_ylabel('x2')
         ax.set_zlabel('y')
         ax.set_title('Original training function')
-        plt.show()
+  
 
 
     #Generate random examples based on the previous function
@@ -56,8 +56,8 @@ def cardinal_sine_data_generator(x1_neg_lim,x1_pos_lim,x2_neg_lim,x2_pos_lim,num
     
     if plot_data:
         #Plot the random generation of examples
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
+        ax = fig.add_subplot(122, projection='3d')
+
 
         #Plot the 3D plot of the points with x as axis and y as its value
         ax.scatter(x[:,0],x[:,1],y,c='r',marker='o')
@@ -146,8 +146,9 @@ def ejecutar_adelante(x, pesos):
     z = x.dot(pesos["w1"]) + pesos["b1"]
 
     # Funcion de activacion Sigmoid
-    h = sigmoid(z)
-
+    #h = sigmoid(z)
+    # Funcion de activacion relu
+    h = np.maximum(0, z)
     # Salida de la red (funcion de activacion lineal). Esto incluye la salida de todas
     # las neuronas y para todos los ejemplos proporcionados
     y = h.dot(pesos["w2"]) + pesos["b2"]
@@ -197,9 +198,13 @@ def back_propagation(x,t,h,z,w2,y):
 
     dL_dh = dL_dy.dot(w2.T)     #(= to classification)
     
+    #For sigmoid activation function
+    # dh_dz=sigmoid(z)*(1-sigmoid(z)) #(changed)
+    # dL_dz = dL_dh*dh_dz             #(changed)
 
-    dh_dz=sigmoid(z)*(1-sigmoid(z)) #(changed)
-    dL_dz = dL_dh*dh_dz             #(changed)
+    #For relu activation function
+    dL_dz = dL_dh       # El calculo dL/dz = dL/dh * dh/dz. La funcion "h" es la funcion de activacion de la capa oculta,
+    dL_dz[z <= 0] = 0   # para la que usamos ReLU. La derivada de la funcion ReLU: 1(z > 0) (0 en otro caso)
 
     dL_dw1 = x.T.dot(dL_dz)                         # Ajuste para w1
     dL_db1 = np.sum(dL_dz, axis=0, keepdims=True)   # Ajuste para b1
@@ -296,9 +301,10 @@ def iniciar(numero_ejemplos, graficar_datos):
     """
 
     # Generamos datos
-    x_train, t_train = cardinal_sine_data_generator(-14,14,-14,14,numero_ejemplos,graficar_datos)
-    x_train[:,0],x0_mu=normalization(x_train[:,0])
-    x_train[:,1],x1_mu=normalization(x_train[:,1])
+    limits=5
+    x_train, t_train = cardinal_sine_data_generator(-limits,limits,-limits,limits,numero_ejemplos,graficar_datos)
+    #x_train[:,0],x0_mu=normalization(x_train[:,0])
+    #x_train[:,1],x1_mu=normalization(x_train[:,1])
     # Split the data
     x_train,t_train,x_val,t_val=random_extract(x_train,t_train,int(numero_ejemplos/5))
     x_train,t_train,x_test,t_test=random_extract(x_train,t_train,int(numero_ejemplos/5))
@@ -310,11 +316,29 @@ def iniciar(numero_ejemplos, graficar_datos):
     pesos = inicializar_pesos(n_entrada=NEURONAS_ENTRADA, n_capa_2=NEURONAS_CAPA_OCULTA, n_capa_3=1)
 
     # Entrena
-    LEARNING_RATE=0.01
-    EPOCHS=101
-    N=10
+    LEARNING_RATE=0.001
+    EPOCHS=301
+    N=1
     train(x_train, t_train,x_val,t_val, pesos, LEARNING_RATE, EPOCHS,N)
-    print("RMSE:", np.sqrt(Loss(ejecutar_adelante(x_test, pesos)["y"], t_test)))
 
+    #Evaluate results
+    y_test=ejecutar_adelante(x_test,pesos)["y"]
+    RMSE_test=np.sqrt(Loss(y_test, t_test))
+    print("RMSE:", RMSE_test)
+    print("The relative error respect to the mean is of ",100*RMSE_test/np.mean(y_test),"%")
+
+    
+    # Plot the predictions
+    if graficar_datos:
+        fig = plt.figure()
+        #Plot the predicted examples
+        ax = fig.add_subplot(111, projection='3d')
+        #Plot the 3D plot of the points with x as axis and y as its value
+        ax.scatter(x_test[:,0],x_test[:,1],y_test,c='r',marker='o')
+        ax.set_xlabel('x1')
+        ax.set_ylabel('x2')
+        ax.set_zlabel('y')
+        ax.set_title('Predicted examples')
+        plt.show()
 
 iniciar(numero_ejemplos=2000, graficar_datos=True)
