@@ -42,7 +42,7 @@ def cardinal_sine_data_generator(x1_neg_lim,x1_pos_lim,x2_neg_lim,x2_pos_lim,num
         ax.set_xlabel('x1')
         ax.set_ylabel('x2')
         ax.set_zlabel('y')
-        ax.set_title('Original training function')
+        ax.set_title('Original function')
   
 
 
@@ -70,14 +70,14 @@ def cardinal_sine_data_generator(x1_neg_lim,x1_pos_lim,x2_neg_lim,x2_pos_lim,num
     y=y.reshape(number_of_examples,1)
     return x,y
 
-def sigmoid(x):
-    """Sigmoid function.
-    Args:
-        x (np array): Input data
-    Returns:
-        np array: Output data
-    """
-    return 1 / (1 + np.exp(-x))
+# def sigmoid(x):
+#     """Sigmoid function.
+#     Args:
+#         x (np array): Input data
+#     Returns:
+#         np array: Output data
+#     """
+#     return 1 / (1 + np.exp(-x))
 
 def random_extract(x,t,extract_size):
     """Extracts a random subset of the data.
@@ -97,20 +97,20 @@ def random_extract(x,t,extract_size):
 
     return x_red,t_red,x_rand,t_rand
 
-def normalization(x):
-    """Normalizes the input data between 1 and -1.
+# def normalization(x):
+#     """Normalizes the input data between 1 and -1.
 
-    Args:
-        x (np array): Input data
+#     Args:
+#         x (np array): Input data
 
-    Returns:
-        np array: Normalized input data
-    """
-    mu=np.mean(x)
-    x_norm=(x - mu) / np.max(np.abs(x))
-    return x_norm,mu
-    #As we know that features are between -14 and 14 we can use max without risk of picking one outlier.
-    #In a real application we should kick outliers
+#     Returns:
+#         np array: Normalized input data
+#     """
+#     mu=np.mean(x)
+#     x_norm=(x - mu) / np.max(np.abs(x))
+#     return x_norm,mu
+#     #As we know that features are between -14 and 14 we can use max without risk of picking one outlier.
+#     #In a real application we should kick outliers
 
 def inicializar_pesos(n_entrada, n_capa_2, n_capa_3):
     """Randomly initializes the weights and biases of the neural network.

@@ -354,7 +354,7 @@ def train(x, t, x_val, t_val, weights, learning_rate, epochs, N):
         weights["b2"] = b2
  
 
-def iniciar(x,t, graficar_datos,hidden,learning_rate,epochs,activation,K):
+def iniciar(x,t, graficar_datos,hidden,learning_rate,epochs,K):
     """Runs all the NN functions.
 
     Args:
@@ -370,14 +370,14 @@ def iniciar(x,t, graficar_datos,hidden,learning_rate,epochs,activation,K):
     m=t.shape[0]
     numero_clases = np.size(np.unique(t))
     Acc_list=[]
-    for _ in range(K):
+    for k in range(K):
         # Split the data
         x_train,t_train,x_val,t_val=random_extract(x,t,int(m/5))
         x_train,t_train,x_test,t_test=random_extract(x_train,t_train,int(m/5))
         #Now we have x_Train,t_Train,x_Val,t_Val,x_Test,t_Test with the right values
 
         # Graficamos los datos si es necesario
-        if graficar_datos:
+        if graficar_datos and k==0:
             # Parametro: "c": color (un color distinto para cada clase en t)
             #Every image in the same plot
             plt.subplot(1,3,1)
@@ -403,12 +403,9 @@ def iniciar(x,t, graficar_datos,hidden,learning_rate,epochs,activation,K):
     return Acc
 
 
-# Generate the data
-x, t = classification_data_generator(cantidad_ejemplos=1000, cantidad_clases=3)
-Acc=iniciar(x,t, graficar_datos=False,hidden=100,learning_rate=1,epochs=10000,activation="sigmoid",K=3)
+if __name__=="__main__":
+    x, t = classification_data_generator(cantidad_ejemplos=1000, cantidad_clases=3)
+    Acc=iniciar(x,t, graficar_datos=True,hidden=100,learning_rate=1,epochs=20000,K=10)
 
 
 
-#Check if overfitting should consider a little increase temporally
-#Accuracy varies too much. We might try fixing the dataset or changing early stop.
-#In parameter sweep we should use one dataset, so we take out of the equation the variability in dataset generation.
